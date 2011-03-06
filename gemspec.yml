@@ -1,0 +1,10 @@
+name: unified2
+summary: "TODO: Summary"
+description: "TODO: Description"
+license: MIT
+authors: mephux
+homepage: http://rubygems.org/gems/unified2
+
+development_dependencies:
+  ore-tasks: ~> 0.3.0
+  rspec: ~> 2.4.0

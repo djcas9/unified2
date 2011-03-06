@@ -1,0 +1,26 @@
+= unified2
+
+* {Homepage}[http://rubygems.org/gems/unified2]
+* {Documentation}[http://rubydoc.info/gems/unified2]
+
+== Description
+
+TODO: Description
+
+== Features
+
+== Examples
+
+  require 'unified2'
+
+== Requirements
+
+== Install
+
+  $ gem install unified2
+
+== Copyright
+
+Copyright (c) 2011 mephux
+
+See LICENSE.txt for details.
