@@ -97,7 +97,7 @@ class Unified2 < BinData::Record
   #define UNIFIED2_PORTSCAN 68
   #define UNIFIED2_IDS_EVENT_IPV6 72
   def type_selection
-    case header.u2type
+    case header.u2type.to_i
     when 2
       "packet"
     when 7
