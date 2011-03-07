@@ -1,1 +1,94 @@
+require 'unified2/construct'
+require 'unified2/event'
+require 'unified2/plugin'
+require 'unified2/signature'
 require 'unified2/version'
+
+# http://cvs.snort.org/viewcvs.cgi/snort/src/output-plugins/spo_unified2.c?rev=1.3&content-type=text/vnd.viewcvs-markup
+require 'bindata'
+
+module Unified2
+
+  class << self
+    attr_accessor :signatures, :plugin
+  end
+
+  def self.configuration(&block)
+    self.instance_eval(&block)
+  end
+
+  def self.plugin(plugin, options)
+    adaptor = Plugin.new(plugin, options)
+  end
+
+  def self.load(path)
+    @signatures ||= {}
+
+    unless File.exists?(path)
+      raise('Error - file does not exist!')
+    end
+
+    if File.readable?(path)
+      file = File.open(path)
+      signatures = Signature.new(file).load
+      @signatures.merge!(signatures)
+    end
+  end
+
+  def self.watch(path, &block)
+    unless File.exists?(path)
+      raise('Error - file does not exist.')
+    end
+
+    if File.readable?(path)
+      io = File.open(path)
+
+      until io.eof?
+        event = Unified2::Construct.read(io)
+        block.call(event.data)
+      end
+
+    else
+      raise('Error - File not readable.')
+    end
+  end
+
+  def self.read(path, options={}, &block)
+    limit = options[:limit] ? (options[:limit] * 2) : 10 # 5 records
+    count = 0
+
+    unless File.exists?(path)
+      raise('Error - file does not exist.')
+    end
+
+    if File.readable?(path)
+      @data = Hash.new
+      io = File.open(path)
+      
+      first_open = File.open(path)
+      first_event = Unified2::Construct.read(first_open)
+      first_open.close
+      
+      @event = Event.new(first_event.data.event_id)
+      
+      until io.eof?
+        event = Unified2::Construct.read(io)
+        
+        if @event.id == event.data.event_id
+          @event.load(event)
+        else
+          block.call(@event)
+          @event = Event.new(event.data.event_id)
+          @event.load(event)
+        end
+        
+        count += 1
+        exit if count > limit
+      end
+
+    else
+      raise('Error - File not readable.')
+    end
+  end
+
+end
