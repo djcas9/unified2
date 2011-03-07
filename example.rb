@@ -15,7 +15,25 @@ class IPV4 < BinData::Primitive
   def get
     self.octets.collect { |octet| "%d" % octet }.join(".")
   end
+  
 end
+
+# class Signature < BinData::Primitive
+#
+#   uint32be :signature_id
+#   stringz :signature_name
+#   array :references, :type => :uint8, :initial_value => []
+#
+#   def set(signature_id)
+#     self.signature_id = signature_id
+#     self.signature_name = 'TEST'
+#     self.references = [1,2]
+#   end
+#
+#   def get
+#     self.signature_id
+#   end
+# end
 
 class RecordHeader < BinData::Record
   endian :big
@@ -27,41 +45,41 @@ end
 class Event < BinData::Record
   endian :big
 
-  uint32 :sensor_id
-  uint32 :event_id
-  uint32 :event_second
-  uint32 :event_microsecond
-  uint32 :signature_id
-  uint32 :generator_id
-  uint32 :signature_revision
-  uint32 :classification_id
-  uint32 :priority_id
-  ipv4   :ip_source
-  ipv4   :ip_destination
-  uint16 :sport_itype
-  uint16 :dport_icode
-  uint8  :protocol
-  uint8  :packet_action
+  uint32    :sensor_id
+  uint32    :event_id
+  uint32    :event_second
+  uint32    :event_microsecond
+  uint32    :signature_id
+  uint32    :generator_id
+  uint32    :signature_revision
+  uint32    :classification_id
+  uint32    :priority_id
+  ipv4      :ip_source
+  ipv4      :ip_destination
+  uint16    :sport_itype
+  uint16    :dport_icode
+  uint8     :protocol
+  uint8     :packet_action
 end
 
 class Event6 < BinData::Record
   endian :big
 
-  uint32  :sensor_id
-  uint32  :event_id
-  uint32  :event_second
-  uint32  :event_microsecond
-  uint32  :signature_id
-  uint32  :generator_id
-  uint32  :signature_revision
-  uint32  :classification_id
-  uint32  :priority_id
-  uint128 :ip_source
-  uint128 :ip_destination
-  uint16  :sport_itype
-  uint16  :dport_icode
-  uint8   :protocol
-  uint8   :packet_action
+  uint32    :sensor_id
+  uint32    :event_id
+  uint32    :event_second
+  uint32    :event_microsecond
+  uint32    :signature_id
+  uint32    :generator_id
+  uint32    :signature_revision
+  uint32    :classification_id
+  uint32    :priority_id
+  uint128   :ip_source
+  uint128   :ip_destination
+  uint16    :sport_itype
+  uint16    :dport_icode
+  uint8     :protocol
+  uint8     :packet_action
 end
 
 class Packet < BinData::Record
@@ -119,21 +137,51 @@ class Unified2 < BinData::Record
 end
 
 require 'pp'
+
+# Load Signatures Into Memory
+file ||= File.open('sid-msg.map')
+@rules = {}
+count = 0
+
+file.each_line do |line|
+  id, body, *references = line.split(' || ')
+  @rules[id] = {
+    :id => id,
+    :name => body,
+    :references => references
+  }
+end
+
 io = File.open('unified2-example')
 
 count = 0
 source_addresses = []
 destination_addresses = []
+signatures = []
+
 until io.eof?
   event = Unified2.read(io)
+  sig = nil
+  
+  if event.data.respond_to?(:signature_id)
+    if @rules.has_key?(event.data.signature_id.to_s)
+      sig = @rules[event.data.signature_id.to_s]
+    end
+  end
 
-  pp event
-  
-  exit -1
-  
+  #pp event
+  if sig
+    sig = sig[:name]
+    next if signatures.include?(sig)
+    
+    signatures.push sig
+    puts "#{event.data.signature_id} => #{sig}"
+  end
+
+
   # if event.data.respond_to?(:ip_source)
   #   #next if source_addresses.include?(event.data.ip_source)
-  #   
+  #
   #   pp "Event: #{event.data.event_id} - S => #{event.data.ip_source} | D => #{event.data.ip_destination}"
   #   source_addresses.push event.data.ip_source
   # end
