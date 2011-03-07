@@ -18,23 +18,6 @@ class IPV4 < BinData::Primitive
 
 end
 
-# class Signature < BinData::Primitive
-#
-#   uint32be :signature_id
-#   stringz :signature_name
-#   array :references, :type => :uint8, :initial_value => []
-#
-#   def set(signature_id)
-#     self.signature_id = signature_id
-#     self.signature_name = 'TEST'
-#     self.references = [1,2]
-#   end
-#
-#   def get
-#     self.signature_id
-#   end
-# end
-
 class RecordHeader < BinData::Record
   endian :big
 
@@ -232,7 +215,7 @@ until io.eof?
 
   count += 1
   if count >= 10 # => 5
-    pp @events["5"]
-    exit -1
+    pp @events
+    exit
   end
 end
