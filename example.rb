@@ -15,7 +15,7 @@ class IPV4 < BinData::Primitive
   def get
     self.octets.collect { |octet| "%d" % octet }.join(".")
   end
-  
+
 end
 
 # class Signature < BinData::Primitive
@@ -154,29 +154,72 @@ end
 
 io = File.open('unified2-example')
 
-count = 0
-source_addresses = []
-destination_addresses = []
-signatures = []
+@events = {}
 
 until io.eof?
   event = Unified2.read(io)
-  sig = nil
+  id = event.data.event_id.to_s
   
   if event.data.respond_to?(:signature_id)
+    
+    @events[id] = {
+      :ip_destination => event.data.ip_destination,
+      :priority_id => event.data.priority_id,
+      :signature_revision => event.data.signature_revision,
+      :event_id => event.data.event_id,
+      :protocol => event.data.protocol,
+      :sport_itype => event.data.sport_itype,
+      :event_second => event.data.event_second,
+      :packet_action => event.data.packet_action,
+      :dport_icode => event.data.dport_icode,
+      :sensor_id => event.data.sensor_id,
+      :classification_id => event.data.classification_id,
+      :generator_id => event.data.generator_id,
+      :ip_source => event.data.ip_source,
+      :event_microsecond => event.data.event_microsecond
+    }
+
     if @rules.has_key?(event.data.signature_id.to_s)
       sig = @rules[event.data.signature_id.to_s]
+      
+      @events[id][:signature] = {
+        :signature_id => event.data.signature_id,
+        :name => sig[:name],
+        :references => sig[:references]
+      }
+    else
+      @events[id][:signature_id] = event.data.signature_id
     end
   end
 
-  #pp event
-  if sig
-    sig = sig[:name]
-    next if signatures.include?(sig)
-    
-    signatures.push sig
-    puts "#{event.data.signature_id} => #{sig}"
+  if event.data.respond_to?(:packet_data)
+    @events[id][:packet] = {
+      :linktype => event.data.linktype,
+      :packet_microsecond => event.data.packet_microsecond,
+      :packet_second => event.data.packet_second,
+      :data => event.data.packet_data,
+      :event_second => event.data.event_second,
+      :packet_length => event.data.packet_length
+    }
   end
+
+  #
+  # sig = nil
+  #
+  # if event.data.respond_to?(:signature_id)
+  #   if @rules.has_key?(event.data.signature_id.to_s)
+  #     sig = @rules[event.data.signature_id.to_s]
+  #   end
+  # end
+  #
+  # #pp event
+  # if sig
+  #   sig = sig[:name]
+  #   next if signatures.include?(sig)
+  #
+  #   signatures.push sig
+  #   puts "#{event.data.signature_id} => #{sig}"
+  # end
 
 
   # if event.data.respond_to?(:ip_source)
@@ -186,6 +229,10 @@ until io.eof?
   #   source_addresses.push event.data.ip_source
   # end
 
-  #count += 1
-  # exit -1 if count >= 10
+
+  count += 1
+  if count >= 10 # => 5
+    pp @events["5"]
+    exit -1
+  end
 end
