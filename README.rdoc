@@ -5,15 +5,32 @@
 
 == Description
 
-TODO: Description
+A ruby interface to the unified2 output format. Ruby Unified2 allows you to manipulate unified2 format for custom storage and analysis.
 
 == Features
+
+	* Monitor unified2 logs and manipulate the data.
+	* modular adaptor support (monogdb, mysql, postgresql etc..)
+	* Parse unified2 log files
+	* Numerous connivence methods for statistical analysis
+	* Control sid-msg.map files and insert whole sid sets
 
 == Examples
 
   require 'unified2'
-
+	
+	Unified2.configuration do
+	  load 'sid-msg.map'
+	  load 'sid-msg.map'
+	end
+	
+	Unified2.watch('/var/log/snort/merged.log', :start => 451) do |event|
+	 puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
+	end
+	
 == Requirements
+
+ * bindata ~> 1.3.1
 
 == Install
 
@@ -21,6 +38,6 @@ TODO: Description
 
 == Copyright
 
-Copyright (c) 2011 mephux
+Copyright (c) 2011 Dustin Willis Webber
 
 See LICENSE.txt for details.

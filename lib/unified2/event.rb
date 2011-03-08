@@ -1,3 +1,4 @@
+require 'unified2/signature'
 require 'ipaddr'
 
 module Unified2
@@ -11,15 +12,11 @@ module Unified2
     end
 
     def signature
-      signature = Struct.new(:id, :name, :references)
-      
-      if @metadata.has_key?(:signature)
-        signature.new(@metadata[:signature][:signature_id],@metadata[:signature][:signature_id],@metadata[:signature][:references])
+      if ((@metadata) && @metadata.has_key?(:signature))
+        @signature = Signature.new(@metadata[:signature])
       else
-        signature.new(@metadata[:signature_id], nil, nil)
+        @signature = Signature.new(:id => @metadata[:signature_id])
       end
-      
-      signature
     end
 
     def ip_destination

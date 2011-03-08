@@ -1,8 +1,8 @@
 require 'unified2/construct'
 require 'unified2/event'
 require 'unified2/plugin'
-require 'unified2/signature'
 require 'unified2/version'
+require 'elif'
 
 # http://cvs.snort.org/viewcvs.cgi/snort/src/output-plugins/spo_unified2.c?rev=1.3&content-type=text/vnd.viewcvs-markup
 require 'bindata'
@@ -30,12 +30,22 @@ module Unified2
 
     if File.readable?(path)
       file = File.open(path)
-      signatures = Signature.new(file).load
-      @signatures.merge!(signatures)
+
+      file.each_line do |line|
+        id, body, *references = line.split(' || ')
+        @signatures[id] = {
+          :id => id,
+          :name => body,
+          :references => references
+        }
+      end
     end
   end
 
-  def self.watch(path, &block)
+  def self.watch(path, options={}, &block)
+    event_id = options[:start] || false
+    timeout = options[:timeout].to_i || 5
+
     unless File.exists?(path)
       raise('Error - file does not exist.')
     end
@@ -43,9 +53,31 @@ module Unified2
     if File.readable?(path)
       io = File.open(path)
 
-      until io.eof?
-        event = Unified2::Construct.read(io)
-        block.call(event.data)
+      if event_id
+        @event = Event.new(event_id.to_i)
+      else
+        first_open = File.open(path)
+        first_event = Unified2::Construct.read(first_open)
+        first_open.close
+        @event = Event.new(first_event.data.event_id)
+      end
+
+      loop do
+        begin
+          event = Unified2::Construct.read(io)
+          
+          if event_id
+            if event.data.event_id.to_i > (event_id - 1)
+              check_event(event, block)
+            end
+          else  
+            check_event(event, block)
+          end
+          
+        rescue EOFError
+          sleep timeout
+          retry
+        end
       end
 
     else
@@ -62,32 +94,38 @@ module Unified2
     end
 
     if File.readable?(path)
-      @data = Hash.new
       io = File.open(path)
-      
+
       first_open = File.open(path)
       first_event = Unified2::Construct.read(first_open)
       first_open.close
-      
+
       @event = Event.new(first_event.data.event_id)
-      
+
       until io.eof?
         event = Unified2::Construct.read(io)
-        
-        if @event.id == event.data.event_id
-          @event.load(event)
-        else
-          block.call(@event)
-          @event = Event.new(event.data.event_id)
-          @event.load(event)
-        end
-        
+
+        check_event(event, block)
+
         count += 1
         exit if count > limit
       end
 
     else
       raise('Error - File not readable.')
+    end
+  end
+
+
+  private
+  
+  def self.check_event(event, block)
+    if @event.id == event.data.event_id
+      @event.load(event)
+    else
+      block.call(@event)
+      @event = Event.new(event.data.event_id)
+      @event.load(event)
     end
   end
 
