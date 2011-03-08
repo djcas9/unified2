@@ -1,5 +1,3 @@
-require 'bindata'
-
 require 'unified2/event_ip4'
 require 'unified2/event_ip6'
 require 'unified2/record_header'

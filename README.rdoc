@@ -19,12 +19,20 @@ A ruby interface to the unified2 output format. Ruby Unified2 allows you to mani
 
   require 'unified2'
 	
+	# load rules into memory
 	Unified2.configuration do
-	  load 'sid-msg.map'
 	  load 'sid-msg.map'
 	end
 	
-	Unified2.watch('/var/log/snort/merged.log', :start => 451) do |event|
+	# Unified2#watch
+	# Watch a unified2 file for changed and process the results.
+	Unified2.watch('/var/log/snort/merged.log') do |event|
+	 puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
+	end
+	
+	# Unified2#read
+	# Parse a unified2 file and process the results.
+	Unified2.read('/var/log/snort/merged.log') do |event|
 	 puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
 	end
 	
