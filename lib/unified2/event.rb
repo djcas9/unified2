@@ -1,6 +1,6 @@
 #
 # rUnified2 - A ruby interface for unified2 output.
-# 
+#
 # Copyright (c) 2010 Dustin Willis Webber (dustin.webber at gmail.com)
 #
 # This program is free software; you can redistribute it and/or modify
@@ -18,8 +18,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-require 'unified2/signature'
 require 'ipaddr'
+require 'json'
+require 'unified2/sensor'
+require 'unified2/signature'
 
 module Unified2
 
@@ -31,16 +33,44 @@ module Unified2
       @id = id
     end
 
-    def signature
-      @signature = Signature.new(@metadata[:signature])
+    def sensor
+      @sensor ||= Unified2.sensor
+    end
+    
+    def protocol
+      @metadata[:protocol] if @metadata.has_key?(:protocol)
     end
 
-    def ip_destination
-      @metadata[:ip_destination] if @metadata.has_key?(:ip_destination)
+    def signature
+      if @metadata.is_a?(Hash)
+        @signature = Signature.new(@metadata[:signature])
+      end
+    end
+    
+    def generator_id
+      if @metadata.is_a?(Hash)
+        @metadata[:generator_id] if @metadata.has_key?(:generator_id)
+      end
     end
 
     def ip_source
-      @metadata[:ip_source] if @metadata.has_key?(:ip_source)
+      if @metadata.is_a?(Hash)
+        @metadata[:ip_source] if @metadata.has_key?(:ip_source)
+      end
+    end
+
+    def source_port
+      @metadata[:sport_itype] if @metadata.has_key?(:sport_itype)
+    end
+
+    def ip_destination
+      if @metadata.is_a?(Hash)
+        @metadata[:ip_destination] if @metadata.has_key?(:ip_destination)
+      end
+    end
+    
+    def destination_port
+      @metadata[:dport_icode] if @metadata.has_key?(:dport_icode)
     end
 
     def load(event)
@@ -53,12 +83,35 @@ module Unified2
       end
     end
 
+    def to_h
+      if @metadata.is_a?(Hash)
+        if @packet.is_a?(Hash)
+          data = {}
+          data.merge!(@metadata)
+          data.merge!(@packet)
+          return data
+        end
+      else
+        if @packet.is_a?(Hash)
+          return @packet
+        end
+      end
+    end
+
+    def to_i
+      @id.to_i
+    end
+
+    def json
+      to_h.to_json
+    end
+
     private
 
       def build_event_metadata(event)
-        hash ||= {}
+        @event_hash = {}
 
-        hash = {
+        @event_hash = {
           :ip_destination => event.data.ip_destination,
           :priority_id => event.data.priority_id,
           :signature_revision => event.data.signature_revision,
@@ -74,32 +127,19 @@ module Unified2
           :ip_source => event.data.ip_source,
           :event_microsecond => event.data.event_microsecond
         }
-
-        if Unified2.signatures
-          if Unified2.signatures.has_key?(event.data.signature_id.to_s)
-            sig = Unified2.signatures[event.data.signature_id.to_s]
-
-            hash[:signature] = {
-              :signature_id => event.data.signature_id,
-              :name => sig[:name],
-              :references => sig[:references]
-            }
-
-          end
+        
+        if event.data.generator_id.to_i == 1
+          build_signature(event)
         else
-          hash[:signature] = {
-            :signature_id => event.data.signature_id,
-            :name => "Unknown Signature #{event.data.signature_id}",
-            :references => []
-          }
+          build_generator(event)
         end
 
-        hash
+        @event_hash
       end
 
       def build_packet_metadata(event)
-        hash ||= {}
-        hash = {
+        @packet_hash = {}
+        @packet_hash = {
           :linktype => event.data.linktype,
           :packet_microsecond => event.data.packet_microsecond,
           :packet_second => event.data.packet_second,
@@ -108,7 +148,51 @@ module Unified2
           :packet_length => event.data.packet_length
         }
 
-        hash
+        @packet_hash
+      end
+
+      def build_generator(event)
+        if Unified2.generators
+          if Unified2.generators.has_key?("#{event.data.generator_id}.#{event.data.signature_id}")
+            sig = Unified2.generators["#{event.data.generator_id}.#{event.data.signature_id}"]
+
+            @event_hash[:signature] = {
+              :signature_id => event.data.signature_id,
+              :name => sig[:name],
+              :references => sig[:references]
+            }
+          end
+        end
+
+        unless @event_hash.has_key?(:signature)
+          @event_hash[:signature] = {
+            :signature_id => event.data.signature_id,
+            :name => "",
+            :references => []
+          }
+        end
+      end
+
+      def build_signature(event)
+        if Unified2.signatures
+          if Unified2.signatures.has_key?(event.data.signature_id.to_s)
+            sig = Unified2.signatures[event.data.signature_id.to_s]
+
+            @event_hash[:signature] = {
+              :signature_id => event.data.signature_id,
+              :name => sig[:name],
+              :references => sig[:references]
+            }
+          end
+        end
+
+        unless @event_hash.has_key?(:signature)
+          @event_hash[:signature] = {
+            :signature_id => event.data.signature_id,
+            :name => "",
+            :references => []
+          }
+        end
       end
 
   end

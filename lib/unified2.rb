@@ -1,6 +1,6 @@
 #
 # rUnified2 - A ruby interface for unified2 output.
-# 
+#
 # Copyright (c) 2010 Dustin Willis Webber (dustin.webber at gmail.com)
 #
 # This program is free software; you can redistribute it and/or modify
@@ -19,50 +19,100 @@
 #
 
 require 'bindata'
+require 'socket'
 # http://cvs.snort.org/viewcvs.cgi/snort/src/output-plugins/spo_unified2.c?rev=1.3&content-type=text/vnd.viewcvs-markup
 
 require 'unified2/construct'
+require 'unified2/core_ext'
 require 'unified2/event'
 require 'unified2/exceptions'
-require 'unified2/plugin'
 require 'unified2/version'
 
 module Unified2
+  
+  # TCP (Transmition Control Protocol) packet type. 
+  TCP = 6
+  
+  # UDP (User Datagram Protocol) packet type.
+  UDP = 17
+  
+  # IP Version 4
+  IPV4 = 4
+  
+  # IP Version 6
+  IPV6 = 6
+  
+  # IGMP (Internet Group Message Protocol) packet type.
+  IGMP = 2
+    
+  # ICMP (Internet Control Message Protocol) packet type.
+  ICMP = 1
+  
+  TYPES = [:signatures, :generators]
 
   class << self
-    attr_accessor :signatures, :plugin
+    attr_accessor :signatures, :generators,
+      :sensor, :hostname, :interface
   end
 
-  def self.configuration(&block)
+  def self.configuration(options={}, &block)
+    @sensor ||= Sensor.new
     self.instance_eval(&block)
   end
 
-  def self.plugin(plugin, options)
-    adaptor = Plugin.new(plugin, options)
+  def self.sensor(options={}, &block)
+    if block
+      @sensor.instance_eval(&block)
+    end
+    @sensor.update(options)
   end
 
-  def self.load(path)
-    @signatures ||= {}
+  def self.load(type, path)
 
-    unless File.exists?(path)
+    unless TYPES.include?(type.to_sym)
+      raise UnknownLoadType, "Error - #{type} is unknown."
+    end
+
+    if File.exists?(path)
+      instance_variable_set("@#{type}", {})
+    else
       raise FileNotFound, "Error - #{path} not found."
     end
 
     if File.readable?(path)
       file = File.open(path)
 
-      file.each_line do |line|
-        id, body, *references = line.split(' || ')
-        @signatures[id] = {
-          :id => id,
-          :name => body,
-          :references => references
-        }
+      case type.to_sym
+      when :generators
+
+        file.each_line do |line|
+          generator_id, alert_id, name = line.split(' || ')
+          id = "#{generator_id}.#{alert_id}"
+
+          @generators[id] = {
+            :generator_id => generator_id,
+            :name => name,
+            :alert_id => alert_id
+          }
+        end
+
+      when :signatures
+
+        file.each_line do |line|
+          id, body, *references = line.split(' || ')
+          @signatures[id] = {
+            :id => id,
+            :name => body,
+            :references => references
+          }
+        end
+
       end
+
     end
   end
 
-  def self.watch(path, event_id=false, &block)
+  def self.watch(path, position=:last, &block)
 
     unless File.exists?(path)
       raise FileNotFound, "Error - #{path} not found."
@@ -71,19 +121,34 @@ module Unified2
     if File.readable?(path)
       io = File.open(path)
 
-      if event_id
-        @event = Event.new(event_id.to_i)
-      else
-        
-        until io.eof?
-          event = Unified2::Construct.read(io)
-        end
-        event_id = event.data.event_id
-        
-        # first_open = File.open(path)
-        # first_event = Unified2::Construct.read(first_open)
-        # first_open.close
+      case position
+      when Integer, Fixnum
+
+        event_id = position.to_i.zero? ? 1 : position.to_i
         @event = Event.new(event_id)
+
+      when Symbol, String
+
+        case position.to_sym
+        when :last
+
+          until io.eof?
+            event = Unified2::Construct.read(io)
+            event_id = event.data.event_id
+          end
+
+          event_id = event_id <= 1 ? 1 : event_id - 1
+          @event = Event.new(event_id)
+
+        when :first
+
+          first_open = File.open(path)
+          first_event = Unified2::Construct.read(first_open)
+          first_open.close
+          event_id = first_event.data.event_id
+          @event = Event.new(event_id)
+
+        end
       end
 
       loop do
@@ -109,12 +174,10 @@ module Unified2
     end
   end
 
-  def self.read(path, options={}, &block)
-    limit = options[:limit] ? (options[:limit] * 2) : 10 # 5 records
-    count = 0
+  def self.read(path, &block)
 
     unless File.exists?(path)
-      raise("Error - #{path} not found.")
+      raise FileNotFound, "Error - #{path} not found."
     end
 
     if File.readable?(path)
@@ -128,11 +191,7 @@ module Unified2
 
       until io.eof?
         event = Unified2::Construct.read(io)
-
         check_event(event, block)
-
-        count += 1
-        exit if count > limit
       end
 
     else

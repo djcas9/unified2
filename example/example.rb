@@ -2,23 +2,28 @@ $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
 require 'unified2'
 require 'pp'
 
-# Plugin Configurations
-# Load signatures into memory
+# Unified2 Configuration
 Unified2.configuration do
   
-  #:mysql,:postgresql,:sguil,:snorby
-  plugin :mongodb, :username => 'root', :password => 'password',
-    :host => 'localhost'
-
-  load 'sid-msg.map'
+  # # Sensor Configurations
+  sensor :id => 200, :name => 'Hello Sensor', :interface => 'en1'
+  
+  # Load signatures into memory
+  load :signatures, '/Users/dustinwebber/.snort/etc/sid-msg.map'
+  load :generators, '/Users/dustinwebber/.snort/etc/gen-msg.map'
+  
 end
 
 # Unified2#watch will continuously monitor
 # the unified output for modifications and
 # process the data accordingly.
-
 Unified2.read('/var/log/snort/merged.log') do |event|
-  puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
+  next if event.signature.name.blank?
+  
+  puts "#{event.sensor.id} #{event.source_port} #{event.destination_port} #{event.protocol}"
+  
+  # puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
+  # {event.generator_id} || #{event.signature.id}
 end
 
 # Unified2#read will parse the supplied
