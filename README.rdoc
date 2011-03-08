@@ -9,11 +9,11 @@ A ruby interface to the unified2 output format. Ruby Unified2 allows you to mani
 
 == Features
 
-	* Monitor unified2 logs and manipulate the data.
-	* modular adaptor support (monogdb, mysql, postgresql etc..)
-	* Parse unified2 log files
-	* Numerous connivence methods for statistical analysis
-	* Control sid-msg.map files and insert whole sid sets
+ * Monitor unified2 logs and manipulate the data.
+ * modular adaptor support (monogdb, mysql, postgresql etc..)
+ * Parse unified2 log files
+ * Numerous connivence methods for statistical analysis
+ * Control sid-msg.map files and insert whole sid sets
 
 == Examples
 
