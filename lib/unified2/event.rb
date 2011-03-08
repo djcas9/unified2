@@ -33,12 +33,49 @@ module Unified2
       @id = id
     end
 
+    def packet_time
+      if @packet.has_key?(:packet_second)
+        @packet[:packet_second]
+        @timestamp = Time.at(@packet[:packet_second].to_i)
+      end
+    end
+
+    def event_time
+      if @packet.has_key?(:event_second)
+        @timestamp = Time.at(@packet[:event_second].to_i)
+      end
+    end
+    alias :timestamp :event_time
+
     def sensor
       @sensor ||= Unified2.sensor
     end
-    
+
     def protocol
-      @metadata[:protocol] if @metadata.has_key?(:protocol)
+      if @metadata.has_key?(:protocol)
+        @protocol = determine_protocol(@metadata[:protocol])
+      end
+    end
+
+    def icmp?
+      return true if protocol == :ICMP
+      false
+    end
+
+    def tcp?
+      return true if protocol == :TCP
+      false
+    end
+
+    def udp?
+      return true if protocol == :UDP
+      false
+    end
+
+    def classification
+      if @metadata.is_a?(Hash)
+        @classification = Classification.new(@metadata[:classifications]) if @metadata[:classifications]
+      end
     end
 
     def signature
@@ -46,7 +83,7 @@ module Unified2
         @signature = Signature.new(@metadata[:signature])
       end
     end
-    
+
     def generator_id
       if @metadata.is_a?(Hash)
         @metadata[:generator_id] if @metadata.has_key?(:generator_id)
@@ -59,8 +96,10 @@ module Unified2
       end
     end
 
+    # Add ICMP type
     def source_port
-      @metadata[:sport_itype] if @metadata.has_key?(:sport_itype)
+      return 0 if icmp?
+      @source_port = @metadata[:sport_itype] if @metadata.has_key?(:sport_itype)
     end
 
     def ip_destination
@@ -68,9 +107,11 @@ module Unified2
         @metadata[:ip_destination] if @metadata.has_key?(:ip_destination)
       end
     end
-    
+
+    # Add ICMP code
     def destination_port
-      @metadata[:dport_icode] if @metadata.has_key?(:dport_icode)
+      return 0 if icmp?
+      @source_port = @metadata[:dport_icode] if @metadata.has_key?(:dport_icode)
     end
 
     def load(event)
@@ -122,12 +163,13 @@ module Unified2
           :packet_action => event.data.packet_action,
           :dport_icode => event.data.dport_icode,
           :sensor_id => event.data.sensor_id,
-          :classification_id => event.data.classification_id,
           :generator_id => event.data.generator_id,
           :ip_source => event.data.ip_source,
           :event_microsecond => event.data.event_microsecond
         }
-        
+
+        build_classifications(event)
+
         if event.data.generator_id.to_i == 1
           build_signature(event)
         else
@@ -192,6 +234,45 @@ module Unified2
             :name => "",
             :references => []
           }
+        end
+      end
+
+      def build_classifications(event)
+        if Unified2.classifications
+          if Unified2.classifications.has_key?("#{event.data.classification_id}")
+            classification = Unified2.classifications["#{event.data.classification_id}"]
+
+            @event_hash[:classification] = {
+              :classification_id => event.data.classification_id,
+              :name => classification[:name],
+              :short => classification[:short],
+              :priority => classification[:priority]
+            }
+          end
+        end
+
+        unless @event_hash.has_key?(:classification)
+          @event_hash[:classification] = {
+            :classification_id => event.data.classification_id,
+            :name => 'Unknown',
+            :short_name => 'n/a',
+            :priority => 0
+          }
+        end
+      end
+
+      def determine_protocol(protocol)
+        case protocol.to_i
+        when 1
+          :ICMP # ICMP (Internet Control Message Protocol) packet type.
+        when 2
+          :IGMP # IGMP (Internet Group Message Protocol) packet type.
+        when 6
+          :TCP # TCP (Transmition Control Protocol) packet type.
+        when 17
+          :UDP # UDP (User Datagram Protocol) packet type.
+        else
+          :'N/A'
         end
       end
 

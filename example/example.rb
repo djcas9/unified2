@@ -11,7 +11,7 @@ Unified2.configuration do
   # Load signatures into memory
   load :signatures, '/Users/dustinwebber/.snort/etc/sid-msg.map'
   load :generators, '/Users/dustinwebber/.snort/etc/gen-msg.map'
-  
+  load :classifications, '/Users/dustinwebber/.snort/etc/classification.config'
 end
 
 # Unified2#watch will continuously monitor
@@ -19,9 +19,12 @@ end
 # process the data accordingly.
 Unified2.read('/var/log/snort/merged.log') do |event|
   next if event.signature.name.blank?
+
+  puts event.classification.id
+
+  #puts "#{event.sensor.name} #{event.timestamp} || #{event.source_port} #{event.destination_port} | #{event.protocol}"
   
-  puts "#{event.sensor.id} #{event.source_port} #{event.destination_port} #{event.protocol}"
-  
+  # #{event.source_port} #{event.destination_port}
   # puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
   # {event.generator_id} || #{event.signature.id}
 end

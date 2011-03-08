@@ -34,22 +34,27 @@ module Unified2
       event_ip6 "ev6"
     end
 
-    string :read_length => :padding_length  # padding
+    # padding
+    string :read_length => :padding_length
 
-    #define UNIFIED2_EVENT 1
-    #define UNIFIED2_PACKET 2
-    #define UNIFIED2_IDS_EVENT 7
-    #define UNIFIED2_EVENT_EXTENDED 66
-    #define UNIFIED2_PERFORMANCE 67
-    #define UNIFIED2_PORTSCAN 68
-    #define UNIFIED2_IDS_EVENT_IPV6 72
     def type_selection
       case header.u2type.to_i
+      when 1
+        # define UNIFIED2_EVENT 1
       when 2
+        # define UNIFIED2_PACKET 2
         "packet"
       when 7
+        # define UNIFIED2_IDS_EVENT 7
         "ev4"
+      when 66
+        # define UNIFIED2_EVENT_EXTENDED 66
+      when 67
+        # define UNIFIED2_PERFORMANCE 67
+      when 68
+        # define UNIFIED2_PORTSCAN 68
       when 72
+        # define UNIFIED2_IDS_EVENT_IPV6 72
         "ev6"
       else
         "unknown type #{header.u2type}"

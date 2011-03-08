@@ -29,30 +29,17 @@ require 'unified2/exceptions'
 require 'unified2/version'
 
 module Unified2
-  
-  # TCP (Transmition Control Protocol) packet type. 
-  TCP = 6
-  
-  # UDP (User Datagram Protocol) packet type.
-  UDP = 17
-  
-  # IP Version 4
-  IPV4 = 4
-  
-  # IP Version 6
-  IPV6 = 6
-  
-  # IGMP (Internet Group Message Protocol) packet type.
-  IGMP = 2
-    
-  # ICMP (Internet Control Message Protocol) packet type.
-  ICMP = 1
-  
-  TYPES = [:signatures, :generators]
+
+  TYPES = [
+    :signatures,
+    :generators,
+    :classifications
+  ]
 
   class << self
     attr_accessor :signatures, :generators,
-      :sensor, :hostname, :interface
+      :sensor, :hostname, :interface,
+      :classifications
   end
 
   def self.configuration(options={}, &block)
@@ -83,6 +70,24 @@ module Unified2
       file = File.open(path)
 
       case type.to_sym
+      when :classifications
+        
+        count = 0
+        file.each_line do |line|
+          next unless line[/^config\s/]
+          count += 1
+          
+          # attempted-dos,Attempted Denial of Service,2
+          data = line.gsub!(/config classification: /, '')
+          short, name, priority = data.to_s.split(',')
+          
+          @classifications[count.to_s] = {
+            :short => short,
+            :name => name,
+            :priority => priority.to_i
+          }
+        end
+        
       when :generators
 
         file.each_line do |line|
