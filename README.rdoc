@@ -1,7 +1,7 @@
 = unified2
 
-* {Homepage}[http://rubygems.org/gems/unified2]
-* {Documentation}[http://rubydoc.info/gems/unified2]
+* {Homepage}[https://github.com/mephux/unified2]
+* {Documentation}[https://github.com/mephux/unified2]
 
 == Description
 
