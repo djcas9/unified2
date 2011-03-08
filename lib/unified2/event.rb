@@ -1,25 +1,7 @@
-#
-# rUnified2 - A ruby interface for unified2 output.
-#
-# Copyright (c) 2010 Dustin Willis Webber (dustin.webber at gmail.com)
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-#
-
 require 'ipaddr'
 require 'json'
+require 'unified2/classification'
+require 'unified2/payload'
 require 'unified2/sensor'
 require 'unified2/signature'
 
@@ -47,8 +29,20 @@ module Unified2
     end
     alias :timestamp :event_time
 
+    def microseconds
+      if @metadata.has_key?(:event_microsecond)
+        @microseconds = @metadata[:event_microsecond]
+      end
+    end
+
     def sensor
       @sensor ||= Unified2.sensor
+    end
+
+    def packet_action
+      if @metadata.has_key?(:event_second)
+        @packet_action = @metadata[:packet_action]
+      end
     end
 
     def protocol
@@ -74,7 +68,7 @@ module Unified2
 
     def classification
       if @metadata.is_a?(Hash)
-        @classification = Classification.new(@metadata[:classifications]) if @metadata[:classifications]
+        @classification = Classification.new(@metadata[:classification]) if @metadata[:classification]
       end
     end
 
@@ -95,6 +89,7 @@ module Unified2
         @metadata[:ip_source] if @metadata.has_key?(:ip_source)
       end
     end
+    alias :source_ip :ip_source
 
     # Add ICMP type
     def source_port
@@ -107,11 +102,24 @@ module Unified2
         @metadata[:ip_destination] if @metadata.has_key?(:ip_destination)
       end
     end
+    alias :destination_ip :ip_destination
 
     # Add ICMP code
     def destination_port
       return 0 if icmp?
       @source_port = @metadata[:dport_icode] if @metadata.has_key?(:dport_icode)
+    end
+
+    def severity
+      @severity = @metadata[:priority_id] if @metadata.has_key?(:priority_id)
+    end
+
+    def payload
+      if @packet.is_a?(Hash)
+        Payload.new(@packet)
+      else
+        Payload.new
+      end
     end
 
     def load(event)
@@ -145,6 +153,24 @@ module Unified2
 
     def json
       to_h.to_json
+    end
+
+    def to_s
+      raw = payload.blank? ? '' : payload.dump(:width => 30)
+%{
+#############################################################################
+Event ID: #{id}
+Timestamp: #{timestamp}
+Severity: #{severity}
+Protocol: #{protocol}
+Source IP: #{source_ip}:#{source_port}
+Destination IP: #{destination_ip}:#{destination_port}
+Signature: #{signature.name}
+Payload:
+} + %{
+#{raw}
+#############################################################################
+}
     end
 
     private
@@ -185,7 +211,7 @@ module Unified2
           :linktype => event.data.linktype,
           :packet_microsecond => event.data.packet_microsecond,
           :packet_second => event.data.packet_second,
-          :data => event.data.packet_data.to_s.unpack('H*'),
+          :payload => event.data.packet_data,
           :event_second => event.data.event_second,
           :packet_length => event.data.packet_length
         }
@@ -200,8 +226,10 @@ module Unified2
 
             @event_hash[:signature] = {
               :signature_id => event.data.signature_id,
+              :revision => event.data.signature_revision,
               :name => sig[:name],
-              :references => sig[:references]
+              :references => sig[:references],
+              :blank => false
             }
           end
         end
@@ -209,8 +237,10 @@ module Unified2
         unless @event_hash.has_key?(:signature)
           @event_hash[:signature] = {
             :signature_id => event.data.signature_id,
-            :name => "",
-            :references => []
+            :revision => 0,
+            :name => "Unknown Signature #{event.data.signature_id}",
+            :references => [],
+            :blank => true
           }
         end
       end
@@ -222,6 +252,7 @@ module Unified2
 
             @event_hash[:signature] = {
               :signature_id => event.data.signature_id,
+              :revision => event.data.signature_revision,
               :name => sig[:name],
               :references => sig[:references]
             }
@@ -231,7 +262,8 @@ module Unified2
         unless @event_hash.has_key?(:signature)
           @event_hash[:signature] = {
             :signature_id => event.data.signature_id,
-            :name => "",
+            :revision => 0,
+            :name => "Unknown Signature #{event.data.signature_id}",
             :references => []
           }
         end
@@ -255,7 +287,7 @@ module Unified2
           @event_hash[:classification] = {
             :classification_id => event.data.classification_id,
             :name => 'Unknown',
-            :short_name => 'n/a',
+            :short => 'n/a',
             :priority => 0
           }
         end

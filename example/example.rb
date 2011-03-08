@@ -8,7 +8,7 @@ Unified2.configuration do
   # # Sensor Configurations
   sensor :id => 200, :name => 'Hello Sensor', :interface => 'en1'
   
-  # Load signatures into memory
+  # Load signatures, generators & classifications into memory
   load :signatures, '/Users/dustinwebber/.snort/etc/sid-msg.map'
   load :generators, '/Users/dustinwebber/.snort/etc/gen-msg.map'
   load :classifications, '/Users/dustinwebber/.snort/etc/classification.config'
@@ -17,12 +17,13 @@ end
 # Unified2#watch will continuously monitor
 # the unified output for modifications and
 # process the data accordingly.
-Unified2.read('/var/log/snort/merged.log') do |event|
-  next if event.signature.name.blank?
 
-  puts event.classification.id
+Unified2.watch('/var/log/snort/merged.log',:last) do |event|
+  #next if event.signature.blank?
 
-  #puts "#{event.sensor.name} #{event.timestamp} || #{event.source_port} #{event.destination_port} | #{event.protocol}"
+  puts event
+
+  # puts "#{event.sensor.name} #{event.timestamp} || #{event.source_port} #{event.destination_port} | #{event.protocol}"
   
   # #{event.source_port} #{event.destination_port}
   # puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
@@ -33,11 +34,11 @@ end
 # unified2 output and return records untill EOF.
 
 # @signatures = []
-# 
-# Unified2.read('/var/log/snort/merged.log', :limit => 5000) do |event|
+# Unified2.watch('/var/log/snort/merged.log', 101) do |event|
+#   next if event.signature.name.blank?
 #   next if @signatures.include?(event.signature.id)
+#   
 #   @signatures.push event.signature.id
 #   
 #   puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
-#   
 # end
