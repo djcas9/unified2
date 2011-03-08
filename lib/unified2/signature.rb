@@ -6,18 +6,19 @@ module Unified2
 
     def initialize(signature={})
       @id = signature[:signature_id] || 0
-      @name = signature[:name]
+      @name = signature[:name] || "Unknow Signature #{@id}"
       @references = signature[:references] || []
     end
 
     def id
       @id.to_i
     end
-    
+
     def name
-      @name.strip
+      return @name.strip if @name
+      @name
     end
-    
+
     def references
       @references
     end

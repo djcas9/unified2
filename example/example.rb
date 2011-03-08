@@ -11,14 +11,13 @@ Unified2.configuration do
     :host => 'localhost'
 
   load 'sid-msg.map'
-  load 'sid-msg.map'
 end
 
 # Unified2#watch will continuously monitor
 # the unified output for modifications and
 # process the data accordingly.
 
-Unified2.watch('unified2', :start => 451) do |event|
+Unified2.watch('/var/log/snort/merged.log') do |event|
   puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
 end
 

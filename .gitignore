@@ -1,21 +1,2 @@
-## MAC OS
-.DS_Store
-
-## TEXTMATE
-*.tmproj
-tmtags
-
-## VIM
-*.swp
-
-## PROJECT::GENERAL
-coverage
-rdoc
-doc
-.yardoc
-pkg
-
-## PROJECT::SPECIFIC
-.bundle/
-.document
-unified2.gemspec
+doc/
+pkg/

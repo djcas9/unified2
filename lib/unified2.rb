@@ -1,6 +1,6 @@
 require 'bindata'
 # http://cvs.snort.org/viewcvs.cgi/snort/src/output-plugins/spo_unified2.c?rev=1.3&content-type=text/vnd.viewcvs-markup
- 
+
 require 'unified2/construct'
 require 'unified2/event'
 require 'unified2/plugin'
@@ -41,9 +41,7 @@ module Unified2
     end
   end
 
-  def self.watch(path, options={}, &block)
-    event_id = options[:start] || false
-    timeout = options[:timeout].to_i || 5
+  def self.watch(path, event_id=false, &block)
 
     unless File.exists?(path)
       raise('Error - file does not exist.')
@@ -55,26 +53,32 @@ module Unified2
       if event_id
         @event = Event.new(event_id.to_i)
       else
-        first_open = File.open(path)
-        first_event = Unified2::Construct.read(first_open)
-        first_open.close
-        @event = Event.new(first_event.data.event_id)
+        
+        until io.eof?
+          event = Unified2::Construct.read(io)
+        end
+        event_id = event.data.event_id
+        
+        # first_open = File.open(path)
+        # first_event = Unified2::Construct.read(first_open)
+        # first_open.close
+        @event = Event.new(event_id)
       end
 
       loop do
         begin
           event = Unified2::Construct.read(io)
-          
+
           if event_id
             if event.data.event_id.to_i > (event_id - 1)
               check_event(event, block)
             end
-          else  
+          else
             check_event(event, block)
           end
-          
+
         rescue EOFError
-          sleep timeout
+          sleep 5
           retry
         end
       end
@@ -117,15 +121,15 @@ module Unified2
 
 
   private
-  
-  def self.check_event(event, block)
-    if @event.id == event.data.event_id
-      @event.load(event)
-    else
-      block.call(@event)
-      @event = Event.new(event.data.event_id)
-      @event.load(event)
+
+    def self.check_event(event, block)
+      if @event.id == event.data.event_id
+        @event.load(event)
+      else
+        block.call(@event)
+        @event = Event.new(event.data.event_id)
+        @event.load(event)
+      end
     end
-  end
 
 end

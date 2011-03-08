@@ -11,15 +11,8 @@ rescue LoadError => e
   STDERR.puts "Run `gem install ore-tasks` to install 'ore/tasks'."
 end
 
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  rdoc.title = "unified2"
-  rdoc.rdoc_files.include("README.rdoc")
-  rdoc.rdoc_files.include("lib/**/*.rb")
-end
-
 begin
-  gem 'rspec', '~> 2.4.0'
+  gem 'rspec', '~> 2.4'
   require 'rspec/core/rake_task'
 
   RSpec::Core::RakeTask.new
@@ -28,4 +21,18 @@ rescue LoadError => e
     abort "Please run `gem install rspec` to install RSpec."
   end
 end
+
+task :test => :spec
 task :default => :spec
+
+begin
+  gem 'yard', '~> 0.6.0'
+  require 'yard'
+
+  YARD::Rake::YardocTask.new  
+rescue LoadError => e
+  task :yard do
+    abort "Please run `gem install yard` to install YARD."
+  end
+end
+task :doc => :yard

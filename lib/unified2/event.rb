@@ -12,11 +12,7 @@ module Unified2
     end
 
     def signature
-      if ((@metadata) && @metadata.has_key?(:signature))
-        @signature = Signature.new(@metadata[:signature])
-      else
-        @signature = Signature.new(:id => @metadata[:signature_id])
-      end
+      @signature = Signature.new(@metadata[:signature])
     end
 
     def ip_destination
@@ -59,16 +55,23 @@ module Unified2
           :event_microsecond => event.data.event_microsecond
         }
 
-        if Unified2.signatures.has_key?(event.data.signature_id.to_s)
-          sig = Unified2.signatures[event.data.signature_id.to_s]
+        if Unified2.signatures
+          if Unified2.signatures.has_key?(event.data.signature_id.to_s)
+            sig = Unified2.signatures[event.data.signature_id.to_s]
 
+            hash[:signature] = {
+              :signature_id => event.data.signature_id,
+              :name => sig[:name],
+              :references => sig[:references]
+            }
+
+          end
+        else
           hash[:signature] = {
             :signature_id => event.data.signature_id,
-            :name => sig[:name],
-            :references => sig[:references]
+            :name => "Unknow Signature #{event.data.signature_id}",
+            :references => []
           }
-        else
-          hash[:signature_id] = event.data.signature_id
         end
 
         hash
