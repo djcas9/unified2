@@ -18,7 +18,5 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-module Unified2
-  # unified2 version
-  VERSION = "0.1.0"
-end
+require 'unified2/exceptions/file_not_found'
+require 'unified2/exceptions/file_not_readable'

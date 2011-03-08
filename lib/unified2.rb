@@ -1,8 +1,29 @@
+#
+# rUnified2 - A ruby interface for unified2 output.
+# 
+# Copyright (c) 2010 Dustin Willis Webber (dustin.webber at gmail.com)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
 require 'bindata'
 # http://cvs.snort.org/viewcvs.cgi/snort/src/output-plugins/spo_unified2.c?rev=1.3&content-type=text/vnd.viewcvs-markup
 
 require 'unified2/construct'
 require 'unified2/event'
+require 'unified2/exceptions'
 require 'unified2/plugin'
 require 'unified2/version'
 
@@ -24,7 +45,7 @@ module Unified2
     @signatures ||= {}
 
     unless File.exists?(path)
-      raise('Error - file does not exist!')
+      raise FileNotFound, "Error - #{path} not found."
     end
 
     if File.readable?(path)
@@ -44,7 +65,7 @@ module Unified2
   def self.watch(path, event_id=false, &block)
 
     unless File.exists?(path)
-      raise('Error - file does not exist.')
+      raise FileNotFound, "Error - #{path} not found."
     end
 
     if File.readable?(path)
@@ -84,7 +105,7 @@ module Unified2
       end
 
     else
-      raise('Error - File not readable.')
+      raise FileNotReadable, "Error - #{path} not readable."
     end
   end
 
@@ -93,7 +114,7 @@ module Unified2
     count = 0
 
     unless File.exists?(path)
-      raise('Error - file does not exist.')
+      raise("Error - #{path} not found.")
     end
 
     if File.readable?(path)
@@ -115,7 +136,7 @@ module Unified2
       end
 
     else
-      raise('Error - File not readable.')
+      raise FileNotReadable, "Error - #{path} not readable."
     end
   end
 

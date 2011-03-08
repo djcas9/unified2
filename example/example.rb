@@ -17,7 +17,7 @@ end
 # the unified output for modifications and
 # process the data accordingly.
 
-Unified2.watch('/var/log/snort/merged.log') do |event|
+Unified2.read('/var/log/snort/merged.log') do |event|
   puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
 end
 
