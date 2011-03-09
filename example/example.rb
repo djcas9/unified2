@@ -4,7 +4,7 @@ require 'pp'
 
 # Unified2 Configuration
 Unified2.configuration do
-  # # Sensor Configurations
+  # Sensor Configurations
   sensor :id => 200, :name => 'Hello Sensor', :interface => 'en1'
   
   # Load signatures, generators & classifications into memory

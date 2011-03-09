@@ -5,12 +5,12 @@
 
 == Description
 
-A ruby interface to the unified2 output format. Ruby Unified2 allows you to manipulate unified2 format for custom storage and analysis.
+A ruby interface for unified2 output. rUnified2 allows you to manipulate unified2 output for custom storage and/or analysis.
 
 == Features
 
  * Monitor unified2 logs and manipulate the data.
- * modular adaptor support (monogdb, mysql, postgresql etc..)
+ * Modular adaptor support (monogdb, mysql, postgresql etc..)
  * Parse unified2 log files
  * Numerous connivence methods for statistical analysis
  * Control sid-msg.map files and insert whole sid sets
@@ -21,17 +21,31 @@ A ruby interface to the unified2 output format. Ruby Unified2 allows you to mani
 
  # load rules into memory
  Unified2.configuration do
-  load 'sid-msg.map'
+	 # Sensor Configurations
+	 sensor :id => 1, :name => 'Test Sensor', :interface => 'en1'
+ 
+	 # Load signatures, generators & classifications into memory
+	 load :signatures, 'sid-msg.map'
+	 load :generators, 'gen-msg.map'
+	 load :classifications, 'classification.config'
  end
 
  # Unified2#watch
  # Watch a unified2 file for changed and process the results.
- Unified2.watch('/var/log/snort/merged.log') do |event|
+
+ Unified2.watch('/var/log/snort/merged.log', :last) do |event|
+	next if event.signature.name.blank?
+	
   puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
+
+	puts event.payload.dump(:width => 30)
+	
+	puts event.classification.name
  end
 
  # Unified2#read
  # Parse a unified2 file and process the results.
+
  Unified2.read('/var/log/snort/merged.log') do |event|
   puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
  end
@@ -39,6 +53,7 @@ A ruby interface to the unified2 output format. Ruby Unified2 allows you to mani
 == Requirements
 
  * bindata ~> 1.3.1
+ * hexdump: ~> 0.1.0
 
 == Install
 
