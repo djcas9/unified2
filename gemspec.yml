@@ -3,6 +3,7 @@ summary: "A ruby interface for unified2 output."
 description: "A ruby interface for unified2 output. rUnified2 allows you to manipulate unified2 output for custom storage and/or analysis."
 license: MIT
 authors: Dustin Willis Webber
+email: dustin.webber@gmail.com
 homepage: https://github.com/mephux/unified2
 
 development_dependencies:
