@@ -4,7 +4,6 @@ require 'pp'
 
 # Unified2 Configuration
 Unified2.configuration do
-  
   # # Sensor Configurations
   sensor :id => 200, :name => 'Hello Sensor', :interface => 'en1'
   
@@ -18,10 +17,10 @@ end
 # the unified output for modifications and
 # process the data accordingly.
 
-Unified2.watch('/var/log/snort/merged.log',:first) do |event|
+Unified2.watch('/var/log/snort/merged.log', 1) do |event|
   next if event.signature.blank?
 
-  puts event
+  puts event.signature.name
 
   # puts "#{event.sensor.name} #{event.timestamp} || #{event.source_port} #{event.destination_port} | #{event.protocol}"
   

@@ -54,6 +54,7 @@ module Unified2
         
         count = 0
         file.each_line do |line|
+          next if line[/^\#/]
           next unless line[/^config\s/]
           count += 1
           
@@ -71,6 +72,7 @@ module Unified2
       when :generators
 
         file.each_line do |line|
+          next if line[/^\#/]
           generator_id, alert_id, name = line.split(' || ')
           id = "#{generator_id}.#{alert_id}"
 
@@ -84,6 +86,7 @@ module Unified2
       when :signatures
 
         file.each_line do |line|
+          next if line[/^\#/]
           id, body, *references = line.split(' || ')
           @signatures[id] = {
             :id => id,
