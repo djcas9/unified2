@@ -13,7 +13,6 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
  * Modular adaptor support (monogdb, mysql, postgresql, sguil etc..)
  * Parse unified2 log files
  * Numerous connivence methods for statistical analysis
- * Control sid-msg.map files and insert whole sid sets
 
 == Examples
 
