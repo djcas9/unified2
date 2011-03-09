@@ -17,7 +17,9 @@ class Event
   field :sensor_id, :type => Integer
   field :severity_id, :type => Integer
   field :source_ip, :type => String
+  field :source_port, :type => Integer
   field :destination_ip, :type => String
+  field :destination_port, :type => Integer
 
   embeds_one :signature
   embeds_one :packet

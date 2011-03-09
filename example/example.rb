@@ -30,6 +30,8 @@ Unified2.watch('seeds/unified2', start_at) do |event|
       :event_id => event.id.to_i,
       :source_ip => event.source_ip.to_s,
       :destination_ip => event.destination_ip.to_s,
+      :source_port => event.source_port,
+      :destination_port => event.destination_port,
       :severity_id => event.severity.to_s,
       :sensor_id => @sensor.id
     }
