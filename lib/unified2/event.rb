@@ -158,14 +158,14 @@ module Unified2
     def to_s
 data = %{
 #############################################################################
-Event ID: #{id}
-Timestamp: #{timestamp}
-Severity: #{severity}
-Protocol: #{protocol}
-Source IP: #{source_ip}:#{source_port}
-Destination IP: #{destination_ip}:#{destination_port}
-Signature: #{signature.name}
-Payload:
+# Event ID: #{id}
+# Timestamp: #{timestamp}
+# Severity: #{severity}
+# Protocol: #{protocol}
+# Source IP: #{source_ip}:#{source_port}
+# Destination IP: #{destination_ip}:#{destination_port}
+# Signature: #{signature.name}
+# Payload:
 
 }
       if payload.blank?
