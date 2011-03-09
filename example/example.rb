@@ -23,8 +23,7 @@ end
 Unified2.watch('seeds/unified2', start_at) do |event|
   next if event.signature.blank? || event.payload.blank?
   
-  # Uncomment for verbose output
-  # puts event
+  puts event
 
   @event = Event.create(
     {
