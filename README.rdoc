@@ -30,7 +30,7 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
  end
 
  # Unified2#watch
- # Watch a unified2 file for changed and process the results.
+ # Watch a unified2 file for changes and process the results.
  Unified2.watch('/var/log/snort/merged.log', :last) do |event|
   next if event.signature.name.blank?
 	
