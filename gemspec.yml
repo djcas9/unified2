@@ -6,9 +6,11 @@ authors: Dustin Willis Webber
 email: dustin.webber@gmail.com
 homepage: https://github.com/mephux/unified2
 
-development_dependencies:
+dependencies:
   bindata: ~> 1.3.1
   hexdump: ~> 0.1.0
+  
+development_dependencies:
   ore-tasks: ~> 0.4
   rspec: ~> 2.4
   yard: ~> 0.6.0
