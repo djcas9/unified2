@@ -35,4 +35,5 @@ rescue LoadError => e
     abort "Please run `gem install yard` to install YARD."
   end
 end
+
 task :doc => :yard
