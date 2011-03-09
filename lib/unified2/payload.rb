@@ -17,7 +17,7 @@ module Unified2
     end
 
     def raw
-      @payload
+      @payload.to_s
     end
     
     def hex

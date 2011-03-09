@@ -9,17 +9,17 @@ Unified2.configuration do
   sensor :id => 200, :name => 'Hello Sensor', :interface => 'en1'
   
   # Load signatures, generators & classifications into memory
-  load :signatures, '/Users/dustinwebber/.snort/etc/sid-msg.map'
-  load :generators, '/Users/dustinwebber/.snort/etc/gen-msg.map'
-  load :classifications, '/Users/dustinwebber/.snort/etc/classification.config'
+  load :signatures, '/Users/mephux/.snort/etc/sid-msg.map'
+  load :generators, '/Users/mephux/.snort/etc/gen-msg.map'
+  load :classifications, '/Users/mephux/.snort/etc/classification.config'
 end
 
 # Unified2#watch will continuously monitor
 # the unified output for modifications and
 # process the data accordingly.
 
-Unified2.watch('/var/log/snort/merged.log',:last) do |event|
-  #next if event.signature.blank?
+Unified2.watch('/var/log/snort/merged.log',:first) do |event|
+  next if event.signature.blank?
 
   puts event
 

@@ -156,8 +156,7 @@ module Unified2
     end
 
     def to_s
-      raw = payload.blank? ? '' : payload.dump(:width => 30)
-%{
+data = %{
 #############################################################################
 Event ID: #{id}
 Timestamp: #{timestamp}
@@ -167,10 +166,14 @@ Source IP: #{source_ip}:#{source_port}
 Destination IP: #{destination_ip}:#{destination_port}
 Signature: #{signature.name}
 Payload:
-} + %{
-#{raw}
-#############################################################################
+
 }
+      if payload.blank?
+        data + '#############################################################################'
+      else
+        payload.dump(:width => 30, :output => data)
+        data + "#############################################################################"
+      end
     end
 
     private
