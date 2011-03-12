@@ -33,9 +33,8 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
  Unified2.watch('/var/log/snort/merged.log', :last) do |event|
   next if event.signature.name.blank?
 	
-  puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
-  puts event.payload.dump(:width => 30)
-  puts event.classification.name
+	puts event
+	
  end
 
  # Unified2#read
