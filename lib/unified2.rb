@@ -3,6 +3,7 @@ require 'socket'
 # http://cvs.snort.org/viewcvs.cgi/snort/src/output-plugins/spo_unified2.c?rev=1.3&content-type=text/vnd.viewcvs-markup
 
 require 'unified2/construct'
+require 'unified2/config_file'
 require 'unified2/core_ext'
 require 'unified2/event'
 require 'unified2/exceptions'
@@ -35,72 +36,22 @@ module Unified2
   end
 
   def self.load(type, path)
-
     unless TYPES.include?(type.to_sym)
-      raise UnknownLoadType, "Error - #{type} is unknown."
+      raise UnknownLoadType, "Error - #{@type} is unknown."
     end
 
     if File.exists?(path)
-      instance_variable_set("@#{type}", {})
+      if File.readable?(path)
+        instance_variable_set("@#{type}", ConfigFile.new(type, path))
+      else
+        raise FileNotReadable, "Error - #{path} not readable."
+      end
     else
       raise FileNotFound, "Error - #{path} not found."
     end
-
-    if File.readable?(path)
-      file = File.open(path)
-
-      case type.to_sym
-      when :classifications
-        
-        count = 0
-        file.each_line do |line|
-          next if line[/^\#/]
-          next unless line[/^config\s/]
-          count += 1
-          
-          # attempted-dos,Attempted Denial of Service,2
-          data = line.gsub!(/config classification: /, '')
-          short, name, priority = data.to_s.split(',')
-          
-          @classifications[count.to_s] = {
-            :short => short,
-            :name => name,
-            :priority => priority.to_i
-          }
-        end
-        
-      when :generators
-
-        file.each_line do |line|
-          next if line[/^\#/]
-          generator_id, alert_id, name = line.split(' || ')
-          id = "#{generator_id}.#{alert_id}"
-
-          @generators[id] = {
-            :generator_id => generator_id,
-            :name => name,
-            :alert_id => alert_id
-          }
-        end
-
-      when :signatures
-
-        file.each_line do |line|
-          next if line[/^\#/]
-          id, body, *references = line.split(' || ')
-          @signatures[id] = {
-            :id => id,
-            :name => body,
-            :references => references
-          }
-        end
-
-      end
-
-    end
   end
 
-  def self.watch(path, position=:last, &block)
+  def self.watch(path, position=:first, &block)
 
     unless File.exists?(path)
       raise FileNotFound, "Error - #{path} not found."
@@ -124,9 +75,9 @@ module Unified2
             event = Unified2::Construct.read(io)
             event_id = event.data.event_id if event
           end
-          
+
           @event = Event.new(event_id + 1)
-          
+
           # set event_id to false to catch
           # beginning loop and process
           event_id = false

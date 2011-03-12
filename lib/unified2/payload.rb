@@ -21,7 +21,9 @@ module Unified2
     end
     
     def hex
-      @payload.to_s.unpack('H*')
+      @hex = @payload.to_s.unpack('H*')
+      return @hex.first if @hex
+      nil
     end
 
     def dump(options={})

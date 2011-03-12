@@ -9,10 +9,9 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
 
 == Features
 
- * Monitor unified2 logs and manipulate the data.
- * Modular adaptor support (monogdb, mysql, postgresql, sguil etc..)
- * Parse unified2 log files
- * Numerous connivence methods for statistical analysis
+ * Monitor/Read unified2 logs & manipulate the data.
+ * Numerous connivence methods
+ * Simple & Intuitive to Use
 
 == Examples
 

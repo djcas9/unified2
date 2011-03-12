@@ -22,6 +22,10 @@ module Unified2
       end
     end
 
+    def uid
+      "#{sensor.id}.#{@id}"
+    end
+
     def event_time
       if @packet.has_key?(:event_second)
         @timestamp = Time.at(@packet[:event_second].to_i)
@@ -158,6 +162,7 @@ module Unified2
     def to_s
 data = %{
 #############################################################################
+# Sensor: #{sensor.id}
 # Event ID: #{id}
 # Timestamp: #{timestamp}
 # Severity: #{severity}
@@ -165,6 +170,7 @@ data = %{
 # Source IP: #{source_ip}:#{source_port}
 # Destination IP: #{destination_ip}:#{destination_port}
 # Signature: #{signature.name}
+# Classification: #{classification.name}
 # Payload:
 
 }
@@ -223,15 +229,15 @@ data = %{
       end
 
       def build_generator(event)
-        if Unified2.generators
-          if Unified2.generators.has_key?("#{event.data.generator_id}.#{event.data.signature_id}")
+        if Unified2.generators.data
+          if Unified2.generators.data.has_key?("#{event.data.generator_id}.#{event.data.signature_id}")
             sig = Unified2.generators["#{event.data.generator_id}.#{event.data.signature_id}"]
 
             @event_hash[:signature] = {
               :signature_id => event.data.signature_id,
+              :generator_id => event.data.generator_id,
               :revision => event.data.signature_revision,
               :name => sig[:name],
-              :references => sig[:references],
               :blank => false
             }
           end
@@ -240,24 +246,25 @@ data = %{
         unless @event_hash.has_key?(:signature)
           @event_hash[:signature] = {
             :signature_id => event.data.signature_id,
+            :generator_id => event.data.generator_id,
             :revision => 0,
             :name => "Unknown Signature #{event.data.signature_id}",
-            :references => [],
             :blank => true
           }
         end
       end
 
       def build_signature(event)
-        if Unified2.signatures
-          if Unified2.signatures.has_key?(event.data.signature_id.to_s)
-            sig = Unified2.signatures[event.data.signature_id.to_s]
+        if Unified2.signatures.data
+          if Unified2.signatures.data.has_key?(event.data.signature_id.to_s)
+            sig = Unified2.signatures.data[event.data.signature_id.to_s]
 
             @event_hash[:signature] = {
               :signature_id => event.data.signature_id,
+              :generator_id => event.data.generator_id,
               :revision => event.data.signature_revision,
               :name => sig[:name],
-              :references => sig[:references]
+              :blank => false
             }
           end
         end
@@ -265,23 +272,24 @@ data = %{
         unless @event_hash.has_key?(:signature)
           @event_hash[:signature] = {
             :signature_id => event.data.signature_id,
+            :generator_id => event.data.generator_id,
             :revision => 0,
             :name => "Unknown Signature #{event.data.signature_id}",
-            :references => []
+            :blank => true
           }
         end
       end
 
       def build_classifications(event)
-        if Unified2.classifications
-          if Unified2.classifications.has_key?("#{event.data.classification_id}")
-            classification = Unified2.classifications["#{event.data.classification_id}"]
+        if Unified2.classifications.data
+          if Unified2.classifications.data.has_key?("#{event.data.classification_id}")
+            classification = Unified2.classifications.data["#{event.data.classification_id}"]
 
             @event_hash[:classification] = {
               :classification_id => event.data.classification_id,
               :name => classification[:name],
               :short => classification[:short],
-              :priority => classification[:priority]
+              :severity => classification[:severity_id]
             }
           end
         end
@@ -291,7 +299,7 @@ data = %{
             :classification_id => event.data.classification_id,
             :name => 'Unknown',
             :short => 'n/a',
-            :priority => 0
+            :severity => 0
           }
         end
       end

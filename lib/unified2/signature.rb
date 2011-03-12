@@ -2,13 +2,13 @@ module Unified2
 
   class Signature
 
-    attr_accessor :id, :revision, :name, :references
+    attr_accessor :id, :generator, :revision, :name
 
     def initialize(signature={})
       @id = signature[:signature_id] || 0
+      @generator = signature[:generator_id]
       @revision = signature[:revision]
       @name = signature[:name].strip
-      @references = signature[:references]
       @blank = signature[:blank]
     end
 
