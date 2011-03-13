@@ -45,7 +45,7 @@ end
 Unified2.watch('/var/log/snort/merged.log', sensor.last_event_id + 1 || :first) do |event|
   next if event.signature.blank?
 
-  #puts event
+  puts event
 
   insert_event = Event.new({
                        :event_id => event.id,
