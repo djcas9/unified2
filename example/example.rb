@@ -15,7 +15,7 @@ Unified2.configuration do
   sensor :interface => 'en1', :name => 'Example Sensor'
 
   # Load signatures, generators & classifications into memory
-  load :signatures, 'seeds/sid-msg.map'
+  load :signatures, 'seeds/d'
   load :generators, 'seeds/gen-msg.map'
   load :classifications, 'seeds/classification.config'
   
