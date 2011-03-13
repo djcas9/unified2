@@ -18,6 +18,7 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
  require 'unified2'
 
  # load rules into memory
+ 
  Unified2.configuration do
   # Sensor Configurations
   sensor :id => 1, :name => 'Test Sensor', :interface => 'en1'
@@ -30,15 +31,15 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
 
  # Unified2#watch
  # Watch a unified2 file for changes and process the results.
+ 
  Unified2.watch('/var/log/snort/merged.log', :last) do |event|
   next if event.signature.name.blank?
-	
-	puts event
-	
+  puts event	
  end
 
  # Unified2#read
  # Parse a unified2 file and process the results.
+ 
  Unified2.read('/var/log/snort/merged.log') do |event|
   puts "#{event.id} | #{event.ip_destination} | #{event.ip_source} | #{event.signature.name}"
  end
