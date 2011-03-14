@@ -1,3 +1,4 @@
+require 'gibbler'
 require 'ipaddr'
 require 'json'
 require 'unified2/classification'
@@ -6,9 +7,10 @@ require 'unified2/sensor'
 require 'unified2/signature'
 
 module Unified2
-
+  
   class Event
-
+    include Gibbler::Complex
+    
     attr_accessor :id, :metadata, :packet
 
     def initialize(id)
@@ -20,6 +22,10 @@ module Unified2
         @packet[:packet_second]
         @timestamp = Time.at(@packet[:packet_second].to_i)
       end
+    end
+
+    def checksum
+      gibbler
     end
 
     def uid

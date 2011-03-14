@@ -1,4 +1,9 @@
-=== 0.2.1 / 2011-03-09
+=== 0.3.0 / 2011-03-14
+
+* Added checksum support for event objects
+* Fixed example signature filename typo
+
+=== 0.2.1 / 2011-03-15
 
 * minor bug fixes and typos
 
