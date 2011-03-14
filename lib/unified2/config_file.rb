@@ -1,5 +1,3 @@
-require 'digest'
-
 module Unified2
   class ConfigFile
 

@@ -23,11 +23,10 @@ module Unified2
       end
     end
     
-    # require 'gibbler'
-    # def checksum
-    #   checkdum = [ip_source, ip_destination, signature.id, signature.generator, sensor.id, severity, classification.id]
-    #   checkdum.gibbler
-    # end
+    def checksum
+      checkdum = [ip_source, ip_destination, signature.id, signature.generator, sensor.id, severity, classification.id]
+      Digest::MD5.hexdigest(checkdum.join(''))
+    end
 
     def uid
       "#{sensor.id}.#{@id}"
