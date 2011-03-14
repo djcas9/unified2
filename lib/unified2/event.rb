@@ -3,7 +3,6 @@ require 'unified2/payload'
 require 'unified2/sensor'
 require 'unified2/signature'
 
-require 'gibbler'
 require 'ipaddr'
 require 'json'
 
