@@ -1,4 +1,4 @@
-require 'gibbler'
+#require 'gibbler'
 require 'ipaddr'
 require 'json'
 require 'unified2/classification'
