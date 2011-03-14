@@ -9,7 +9,7 @@ require 'unified2/signature'
 module Unified2
   
   class Event
-    include Gibbler::Complex
+    #include Gibbler::Complex
     
     attr_accessor :id, :metadata, :packet
 
