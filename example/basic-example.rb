@@ -22,6 +22,6 @@ end
 Unified2.watch('seeds/unified2', :first) do |event|
   next if event.signature.blank?
 
-  puts event.checksum # => 66302273aa2f181d0310aa789027bac3ce1efb4f
+  puts event
 
 end

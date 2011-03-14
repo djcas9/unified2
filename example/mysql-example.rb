@@ -41,7 +41,7 @@ end
 # The second argument is the last event processed by
 # the sensor. If the last_event_id column is blank in the
 # sensor table it will begin at the first available event.
-Unified2.watch('/var/log/snort/merged.log', sensor.last_event_id + 1 || :first) do |event|
+Unified2.watch('seeds/unified2', sensor ? sensor.last_event_id + 1 : :first) do |event|
   next if event.signature.blank?
 
   puts event

@@ -1,3 +1,7 @@
+=== 0.3.2 / 2011-03-15
+
+* fix broken example scripts
+
 === 0.3.1 / 2011-03-15
 
 * Removed gibbler in favor of custom Event#checksum method due to datamapper issues.
