@@ -13,8 +13,8 @@ class Connect
       :username => "rUnified2",
       :password => "password"
     })
-    DataMapper.finalize
-    DataMapper.auto_upgrade!
+    #DataMapper.finalize
+    #DataMapper.auto_upgrade!
   end
   
 end

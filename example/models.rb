@@ -6,8 +6,6 @@ class Event
 
   property :id, Serial, :index => true
   
-  property :checksum, String, :index => true
-  
   property :event_id, Integer, :index => true
   
   property :sensor_id, Integer, :index => true

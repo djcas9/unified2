@@ -22,11 +22,12 @@ module Unified2
         @timestamp = Time.at(@packet[:packet_second].to_i)
       end
     end
-
-    def checksum
-      checkdum = [ip_source, ip_destination, signature.id, signature.generator, sensor.id, severity, classification.id]
-      checkdum.gibbler
-    end
+    
+    # require 'gibbler'
+    # def checksum
+    #   checkdum = [ip_source, ip_destination, signature.id, signature.generator, sensor.id, severity, classification.id]
+    #   checkdum.gibbler
+    # end
 
     def uid
       "#{sensor.id}.#{@id}"
