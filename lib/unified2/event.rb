@@ -25,7 +25,7 @@ module Unified2
     end
 
     def checksum
-      self.gibbler
+      #self.gibbler
     end
 
     def uid
