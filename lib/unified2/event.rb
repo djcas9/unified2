@@ -1,19 +1,19 @@
-require 'ipaddr'
-require 'json'
 require 'unified2/classification'
 require 'unified2/payload'
 require 'unified2/sensor'
 require 'unified2/signature'
 
+require 'gibbler'
+require 'ipaddr'
+require 'json'
+
 module Unified2
   
   class Event
-    #include Gibbler::Complex
     
     attr_accessor :id, :metadata, :packet
 
     def initialize(id)
-      require 'gibbler'
       @id = id
     end
 
@@ -25,7 +25,8 @@ module Unified2
     end
 
     def checksum
-      #self.gibbler
+      checkdum = [ip_source, ip_destination, signature.id, signature.generator, sensor.id, severity, classification.id]
+      checkdum.gibbler
     end
 
     def uid
