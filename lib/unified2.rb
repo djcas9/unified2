@@ -1,5 +1,4 @@
 require 'bindata'
-require 'gibbler'
 require 'socket'
 # http://cvs.snort.org/viewcvs.cgi/snort/src/output-plugins/spo_unified2.c?rev=1.3&content-type=text/vnd.viewcvs-markup
 

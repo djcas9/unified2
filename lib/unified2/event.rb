@@ -9,6 +9,7 @@ require 'json'
 module Unified2
   
   class Event
+    require 'gibbler'
     
     attr_accessor :id, :metadata, :packet
 

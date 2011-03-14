@@ -1,8 +1,7 @@
 module Unified2
   class Sensor
     
-    attr_accessor :id, :hostname, 
-    :interface, :name
+    attr_accessor :id, :hostname, :interface, :name
     
     def initialize(options={})
       @id = options[:id] || 0

@@ -6,7 +6,7 @@ class Event
 
   property :id, Serial, :index => true
   
-  property :uid, String, :index => true
+  property :checksum, String, :index => true
   
   property :event_id, Integer, :index => true
   
