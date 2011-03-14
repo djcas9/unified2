@@ -14,7 +14,6 @@ module Unified2
 
     def initialize(id)
       @id = id
-      require 'gibbler'
     end
 
     def packet_time
