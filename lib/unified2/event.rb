@@ -9,12 +9,12 @@ require 'json'
 module Unified2
   
   class Event
-    require 'gibbler'
     
     attr_accessor :id, :metadata, :packet
 
     def initialize(id)
       @id = id
+      require 'gibbler'
     end
 
     def packet_time
