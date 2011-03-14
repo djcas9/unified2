@@ -18,7 +18,6 @@ Unified2.configuration do
   load :signatures, 'seeds/sid-msg.map'
   load :generators, 'seeds/gen-msg.map'
   load :classifications, 'seeds/classification.config'
-  
 end
 
 # Locate the sensor in the database using
