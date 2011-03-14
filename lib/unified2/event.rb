@@ -1,4 +1,3 @@
-#require 'gibbler'
 require 'ipaddr'
 require 'json'
 require 'unified2/classification'
@@ -14,6 +13,7 @@ module Unified2
     attr_accessor :id, :metadata, :packet
 
     def initialize(id)
+      require 'gibbler'
       @id = id
     end
 
@@ -237,7 +237,7 @@ data = %{
       def build_generator(event)
         if Unified2.generators.data
           if Unified2.generators.data.has_key?("#{event.data.generator_id}.#{event.data.signature_id}")
-            sig = Unified2.generators["#{event.data.generator_id}.#{event.data.signature_id}"]
+            sig = Unified2.generators.data["#{event.data.generator_id}.#{event.data.signature_id}"]
 
             @event_hash[:signature] = {
               :signature_id => event.data.signature_id,
