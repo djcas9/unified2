@@ -1,0 +1,1 @@
+require 'unified2/constructor/construct'

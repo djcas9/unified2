@@ -1,196 +1,338 @@
 require 'unified2/classification'
 require 'unified2/payload'
+require 'unified2/protocol'
 require 'unified2/sensor'
 require 'unified2/signature'
 
+require 'packetfu'
 require 'ipaddr'
 require 'json'
 
 module Unified2
-  
-  class Event
-    
-    attr_accessor :id, :metadata, :packet
 
+  class Event
+
+    attr_accessor :id, :event_data, :packet_data
+
+    #
+    # Initialize event
+    #
+    # @param [Integer] id Event id
+    #
     def initialize(id)
-      @id = id
+      @id = id.to_i
     end
 
+    #
+    # Packet Time
+    #
+    # Time of creation for the unified2 packet.
+    #
+    # @return [Time] Packet time object
+    #
     def packet_time
-      if @packet.has_key?(:packet_second)
-        @packet[:packet_second]
-        @timestamp = Time.at(@packet[:packet_second].to_i)
+      if @packet_data.has_key?(:packet_second)
+        @packet_data[:packet_second]
+        @timestamp = Time.at(@packet_data[:packet_second].to_i)
       end
     end
-    
+
+    #
+    # Checksum
+    #
+    # Create a unique checksum for each event
+    # using the ip source, destination, signature id,
+    # generator id, sensor id, severity id, and the
+    # classification id.
+    #
+    # @return [String] Event checksum
+    #
     def checksum
       checkdum = [ip_source, ip_destination, signature.id, signature.generator, sensor.id, severity, classification.id]
       Digest::MD5.hexdigest(checkdum.join(''))
     end
 
-    def uid
-      "#{sensor.id}.#{@id}"
-    end
-
+    #
+    # Event Time
+    #
+    # The event timestamp created by unified2.
+    #
+    # @return [Time] Event time object
+    #
     def event_time
-      if @packet.has_key?(:event_second)
-        @timestamp = Time.at(@packet[:event_second].to_i)
+      if @packet_data.has_key?(:event_second)
+        @timestamp = Time.at(@packet_data[:event_second].to_i)
       end
     end
     alias :timestamp :event_time
 
+    #
+    # Microseconds
+    #
+    # The event time in microseconds.
+    #
+    # @return [String] Event microseconds
+    #
     def microseconds
-      if @metadata.has_key?(:event_microsecond)
-        @microseconds = @metadata[:event_microsecond]
+      if @event_data.has_key?(:event_microsecond)
+        @microseconds = @event_data[:event_microsecond]
       end
     end
 
+    #
+    # Sensor
+    #
+    # @return [Sensor] Sensor object
+    #
     def sensor
       @sensor ||= Unified2.sensor
     end
 
+    #
+    # Packet Action
+    #
+    # @return [Integer] Packet action
+    #
     def packet_action
-      if @metadata.has_key?(:event_second)
-        @packet_action = @metadata[:packet_action]
+      if @event_data.has_key?(:event_second)
+        @packet_data_action = @event_data[:packet_action]
       end
     end
 
+    #
+    # Protocol
+    #
+    # @return [Protocol] Event protocol object
+    #
     def protocol
-      if @metadata.has_key?(:protocol)
-        @protocol = determine_protocol(@metadata[:protocol])
-      end
+      @protocol = Protocol.new(determine_protocol(@event_data[:protocol]), packet)
     end
 
-    def icmp?
-      return true if protocol == :ICMP
-      false
-    end
 
-    def tcp?
-      return true if protocol == :TCP
-      false
-    end
-
-    def udp?
-      return true if protocol == :UDP
-      false
-    end
-
+    #
+    # Classification
+    #
+    # @return [Classification] Event classification object
+    #
     def classification
-      if @metadata.is_a?(Hash)
-        @classification = Classification.new(@metadata[:classification]) if @metadata[:classification]
+      if @event_data.is_a?(Hash)
+        @classification = Classification.new(@event_data[:classification]) if @event_data[:classification]
       end
     end
 
+    #
+    # Signature
+    #
+    # @return [Signature] Event signature object
+    #
     def signature
-      if @metadata.is_a?(Hash)
-        @signature = Signature.new(@metadata[:signature])
+      if @event_data.is_a?(Hash)
+        @signature = Signature.new(@event_data[:signature])
       end
     end
 
-    def generator_id
-      if @metadata.is_a?(Hash)
-        @metadata[:generator_id] if @metadata.has_key?(:generator_id)
-      end
-    end
-
+    #
+    # Source IP Address
+    #
+    # @return [IPAddr] Event source ip address
+    #
     def ip_source
-      if @metadata.is_a?(Hash)
-        @metadata[:ip_source] if @metadata.has_key?(:ip_source)
+      if @event_data.is_a?(Hash)
+        @event_data[:ip_source] if @event_data.has_key?(:ip_source)
       end
     end
     alias :source_ip :ip_source
 
-    # Add ICMP type
+    #
+    # Source Port
+    #
+    # @return [Integer] Event source port
+    #
+    # @note #source_port will return zero if
+    # the event protocol is icmp.
+    #
     def source_port
-      return 0 if icmp?
-      @source_port = @metadata[:sport_itype] if @metadata.has_key?(:sport_itype)
+      return 0 if protocol.icmp?
+      @source_port = @event_data[:sport_itype] if @event_data.has_key?(:sport_itype)
     end
 
+    #
+    # Destination IP Address
+    #
+    # @return [IPAddr] Event destination ip address
+    #
     def ip_destination
-      if @metadata.is_a?(Hash)
-        @metadata[:ip_destination] if @metadata.has_key?(:ip_destination)
+      if @event_data.is_a?(Hash)
+        @event_data[:ip_destination] if @event_data.has_key?(:ip_destination)
       end
     end
     alias :destination_ip :ip_destination
 
-    # Add ICMP code
+    #
+    # Destination Port
+    #
+    # @return [Integer] Event destination port
+    #
+    # @note #destination_port will return zero if
+    # the event protocol is icmp.
+    #
     def destination_port
-      return 0 if icmp?
-      @source_port = @metadata[:dport_icode] if @metadata.has_key?(:dport_icode)
+      return 0 if protocol.icmp?
+      @source_port = @event_data[:dport_icode] if @event_data.has_key?(:dport_icode)
     end
 
+    #
+    # Severity
+    #
+    # @return [Integer] Event severity id
+    #
     def severity
-      @severity = @metadata[:priority_id] if @metadata.has_key?(:priority_id)
+      @severity = @event_data[:priority_id] if @event_data.has_key?(:priority_id)
     end
 
+    #
+    # Packet
+    # 
+    # @return [Packet] Event packet object
+    # 
+    def packet
+      @packet = PacketFu::Packet.parse(@packet_data[:packet])
+    end
+
+    #
+    # Payload
+    #
+    # @return [Payload] Description
+    #
     def payload
-      if @packet.is_a?(Hash)
-        Payload.new(@packet)
-      else
-        Payload.new
-      end
+      Payload.new(packet.payload, @packet_data)
     end
-
+    
+    #
+    # Load
+    # 
+    # Initializes the raw data returned by
+    # bindata into a more comfurtable format.
+    # 
+    # @param [Event] Name Description
+    # 
     def load(event)
       if event.data.respond_to?(:signature_id)
-        @metadata ||= build_event_metadata(event)
+        @event_data ||= build_event_data(event)
       end
 
       if event.data.respond_to?(:packet_data)
-        @packet ||= build_packet_metadata(event)
+        @packet_data ||= build_packet_data(event)
       end
     end
 
+    #
+    # Convert To Hash
+    # 
+    # @return [Hash] Event hash object
+    # 
     def to_h
-      if @metadata.is_a?(Hash)
-        if @packet.is_a?(Hash)
-          data = {}
-          data.merge!(@metadata)
-          data.merge!(@packet)
-          return data
-        end
-      else
-        if @packet.is_a?(Hash)
-          return @packet
-        end
+      @to_hash = {}
+      
+      [@event_data, @packet_data].each do |hash|
+        @to_hash.merge!(hash) if hash.is_a?(Hash)
       end
+      
+      @to_hash
     end
 
+    #
+    # Convert To Integer
+    # 
+    # @return [Integer] Event id
+    # 
     def to_i
       @id.to_i
     end
-
+    
+    #
+    # Convert To Json
+    # 
+    # @return [String] Event hash in json format
+    # 
     def json
       to_h.to_json
     end
 
-    def to_s
-data = %{
-#############################################################################
-# Sensor: #{sensor.id}
-# Event ID: #{id}
-# Timestamp: #{timestamp}
-# Severity: #{severity}
-# Protocol: #{protocol}
-# Source IP: #{source_ip}:#{source_port}
-# Destination IP: #{destination_ip}:#{destination_port}
-# Signature: #{signature.name}
-# Classification: #{classification.name}
-# Payload:
-
-}
-      if payload.blank?
-        data + '#############################################################################'
+    #
+    # Ethernet Header
+    # 
+    # @return [Hash] Ethernet header
+    # 
+    def eth_header
+      if ((packet.is_eth?) && packet.has_data?)
+        @ip_header = {
+          :v => payload.packet.ip_header.ip_v,
+          :hl => payload.packet.ip_header.ip_hl,
+          :tos => payload.packet.ip_header.ip_tos,
+          :len => payload.packet.ip_header.ip_len,
+          :id => payload.packet.ip_header.ip_id,
+          :frag => payload.packet.ip_header.ip_frag,
+          :ttl => payload.packet.ip_header.ip_ttl,
+          :proto => payload.packet.ip_header.ip_proto,
+          :sum => payload.packet.ip_header.ip_sum
+        }
       else
-        payload.dump(:width => 30, :output => data)
-        data + "#############################################################################"
+        @ip_header = {}
       end
+    end
+
+    #
+    # IP Header
+    # 
+    # @return [Hash] IP header
+    #
+    def ip_header
+      if ((packet.is_ip?) && packet.has_data?)
+        @ip_header = {
+          :v => packet.ip_header.ip_v,
+          :hl => packet.ip_header.ip_hl,
+          :tos => packet.ip_header.ip_tos,
+          :len => packet.ip_header.ip_len,
+          :id => packet.ip_header.ip_id,
+          :frag => packet.ip_header.ip_frag,
+          :ttl => packet.ip_header.ip_ttl,
+          :proto => packet.ip_header.ip_proto,
+          :sum => packet.ip_header.ip_sum
+        }
+      else
+        @ip_header = {}
+      end
+    end
+    
+    #
+    # Convert To String
+    # 
+    # @return [String] Event string object
+    # 
+    def to_s
+      data = %{
+        Sensor: #{sensor.id}
+        Event ID: #{id}
+        Timestamp: #{timestamp.strftime('%D %H:%M:%S')}
+        Severity: #{severity}
+        Protocol: #{protocol}
+        Source IP: #{source_ip}:#{source_port}
+        Destination IP: #{destination_ip}:#{destination_port}
+        Signature: #{signature.name}
+        Classification: #{classification.name}
+      }
+      unless payload.blank?
+        data += "Payload:\n"
+        payload.dump(:width => 30, :output => data)
+      end
+
+      data.gsub(/^\s+/, "")
     end
 
     private
 
-      def build_event_metadata(event)
+      def build_event_data(event)
         @event_hash = {}
 
         @event_hash = {
@@ -220,13 +362,13 @@ data = %{
         @event_hash
       end
 
-      def build_packet_metadata(event)
+      def build_packet_data(event)
         @packet_hash = {}
         @packet_hash = {
           :linktype => event.data.linktype,
           :packet_microsecond => event.data.packet_microsecond,
           :packet_second => event.data.packet_second,
-          :payload => event.data.packet_data,
+          :packet => event.data.packet_data,
           :event_second => event.data.event_second,
           :packet_length => event.data.packet_length
         }
@@ -325,5 +467,6 @@ data = %{
         end
       end
 
-  end
-end
+  end # class Event
+
+end # module Unified2

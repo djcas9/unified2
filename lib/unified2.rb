@@ -1,9 +1,8 @@
 require 'bindata'
 require 'digest'
 require 'socket'
-# http://cvs.snort.org/viewcvs.cgi/snort/src/output-plugins/spo_unified2.c?rev=1.3&content-type=text/vnd.viewcvs-markup
 
-require 'unified2/construct'
+require 'unified2/constructor'
 require 'unified2/config_file'
 require 'unified2/core_ext'
 require 'unified2/event'
@@ -73,7 +72,7 @@ module Unified2
         when :last
 
           until io.eof?
-            event = Unified2::Construct.read(io)
+            event = Unified2::Constructor::Construct.read(io)
             event_id = event.data.event_id if event
           end
 
@@ -86,7 +85,7 @@ module Unified2
         when :first
 
           first_open = File.open(path)
-          first_event = Unified2::Construct.read(first_open)
+          first_event = Unified2::Constructor::Construct.read(first_open)
           first_open.close
           event_id = first_event.data.event_id
           @event = Event.new(event_id)
@@ -96,7 +95,7 @@ module Unified2
 
       loop do
         begin
-          event = Unified2::Construct.read(io)
+          event = Unified2::Constructor::Construct.read(io)
 
           if event_id
             if event.data.event_id.to_i > (event_id - 1)
@@ -127,13 +126,13 @@ module Unified2
       io = File.open(path)
 
       first_open = File.open(path)
-      first_event = Unified2::Construct.read(first_open)
+      first_event = Unified2::Constructor::Construct.read(first_open)
       first_open.close
 
       @event = Event.new(first_event.data.event_id)
 
       until io.eof?
-        event = Unified2::Construct.read(io)
+        event = Unified2::Constructor::Construct.read(io)
         check_event(event, block)
       end
 

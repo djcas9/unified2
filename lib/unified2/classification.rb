@@ -2,7 +2,17 @@ module Unified2
   class Classification
 
     attr_accessor :id, :name, :short, :severity
-
+    
+    #
+    # Initialize classification
+    # 
+    # @param [Hash] classification Classification attributes
+    # 
+    # @option classification [Integer] :classification_id Classification id
+    # @option classification [String] :name Classification name
+    # @option classification [String] :short Classification short name
+    # @option classification [String] :severity Classification severity id
+    # 
     def initialize(classification={})
       @id = classification[:classification_id]
       @name = classification[:name]
@@ -10,5 +20,6 @@ module Unified2
       @severity = classification[:severity]
     end
 
-  end
-end
+  end # class Classification
+
+end # module Unified2

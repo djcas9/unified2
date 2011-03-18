@@ -3,6 +3,12 @@ module Unified2
 
     attr_accessor :type, :path, :md5, :data
 
+    #
+    # Initialize configuration file
+    # 
+    # @param [String, Symbol] type Configuration file type
+    # @param [String] path Configuration file path
+    # 
     def initialize(type, path)
       @type = type
       @path = path
@@ -12,7 +18,13 @@ module Unified2
     end
 
     private
-
+      
+      #
+      # Configuration Import
+      # 
+      # Parse the configuration files and store
+      # them in memory as a hash.
+      # 
       def import
         file = File.open(@path)
         
@@ -25,7 +37,6 @@ module Unified2
             next unless line[/^config\s/]
             count += 1
 
-            # attempted-dos,Attempted Denial of Service,2
             data = line.gsub!(/config classification: /, '')
             short, name, severity = data.to_s.split(',')
 
@@ -76,5 +87,6 @@ module Unified2
         end
       end
 
-  end
-end
+  end # class ConfigFile
+
+end # module Unified2

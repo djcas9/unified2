@@ -1,4 +1,6 @@
 $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
+
+require 'mephux/packetfu'
 require 'unified2'
 require 'pp'
 
@@ -19,7 +21,7 @@ end
 # The second argument is the last event processed by
 # the sensor. If the last_event_id column is blank in the
 # sensor table it will begin at the first available event.
-Unified2.watch('seeds/unified2', :first) do |event|
+Unified2.watch('seeds/unified2.log', :first) do |event|
   next if event.signature.blank?
 
   puts event
