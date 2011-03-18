@@ -1,7 +1,9 @@
 # unified2
 
-* [Homepage][https://github.com/mephux/unified2]
-* [Documentation][https://github.com/mephux/unified2]
+* [Homepage](http://github.com/mephux/unified2)
+* [Issues](http://github.com/mephux/unified2/issues)
+* [Documentation](http://rubydoc.info/gems/unified2/frames)
+* [Email](mailto:dustin.webber at gmail.com)
 
 ## Description
 
