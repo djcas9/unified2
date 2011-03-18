@@ -4,6 +4,11 @@ module Unified2
 
     attr_accessor :id, :generator, :revision, :name
 
+    #
+    # Initialize signature object
+    # 
+    # @param [Hash] signature Signature hash attributes
+    # 
     def initialize(signature={})
       @id = signature[:signature_id] || 0
       @generator = signature[:generator_id]

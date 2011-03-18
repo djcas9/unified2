@@ -47,9 +47,9 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
 
 	Unified2.read('/var/log/snort/merged.log') do |event|
 	
-	 puts event.protocol # => TCP
+	 puts event.protocol #=> "TCP"
 	
-	 puts event.protocol.to_h # => {:length=>379, :seq=>3934511163, :ack=>1584708129 ... }
+	 puts event.protocol.to_h #=> {:length=>379, :seq=>3934511163, :ack=>1584708129 ... }
 	
 	end
 

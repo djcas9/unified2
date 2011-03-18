@@ -1,11 +1,23 @@
 module Unified2
   class Protocol
-
+    
+    #
+    # Initialize protocol object
+    # 
+    # @param [String] protocol Event protocol
+    # 
+    # @param [Event#packet] packet PacketFu object
+    # 
     def initialize(protocol, packet=nil)
       @protocol = protocol
       @packet = packet
     end
 
+    #
+    # Protocol Header
+    # 
+    # @return [Object, nil] Protocol header object
+    # 
     def header
       if @packet.has_data?
         if @packet.send(:"is_#{@protocol.downcase}?")
@@ -16,25 +28,56 @@ module Unified2
       end
     end
 
+    #
+    # ICMP?
+    # 
+    # @return [true, false] Check is protocol is icmp
+    # 
     def icmp?
       return true if @protocol == :ICMP
       false
     end
 
+    #
+    # TCP?
+    # 
+    # @return [true, false] Check is protocol is tcp
+    #
     def tcp?
       return true if @protocol == :TCP
       false
     end
 
+    #
+    # UDP?
+    # 
+    # @return [true, false] Check is protocol is udp
+    #
     def udp?
       return true if @protocol == :UDP
       false
     end
 
+    #
+    # Convert To String
+    # 
+    # @return [String] Protocol
+    # 
+    # @example 
+    #   event.protocol #=> 'TCP'
+    # 
     def to_s
       @protocol.to_s
     end
 
+    #
+    # Convert To Hash
+    # 
+    # @return [Hash] Protocol header hash object
+    # 
+    # @example
+    #   event.protocol.to_h #=> {:length=>379, :seq=>3934511163, :ack=>1584708129 ... }
+    # 
     def to_h
       if send(:"#{@protocol.downcase}?")
         self.send(:"#{@protocol.downcase}")

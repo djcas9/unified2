@@ -87,7 +87,6 @@ module Unified2
     # @raise [ArgumentError]
     #   The given data does not define the `#each_byte` method, or
     #
-    # 
     # @note
     #   Please view the hexdump documentation for more
     #   information. Hexdump is a great lib by @postmodern. 

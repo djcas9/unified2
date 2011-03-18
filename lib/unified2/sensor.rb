@@ -3,6 +3,15 @@ module Unified2
     
     attr_accessor :id, :hostname, :interface, :name
     
+    #
+    # Initialize sensor object
+    # 
+    # @param [Hash] options Sensor hash attributes
+    # 
+    # @option options [Integer] :id Sensor id
+    # @option options [String] :name Sensor name
+    # @option options [String] :interface Sensor interface
+    # 
     def initialize(options={})
       @id = options[:id] || 0
       @name = options[:name] || ""
@@ -10,6 +19,16 @@ module Unified2
       @interface ||= options[:interface] || nil
     end
     
+    #
+    # Update
+    # 
+    # @param [Hash] attributes Sensor attributes
+    # 
+    # @option attributes [Integer] :id Sensor id
+    # @option attributes [String] :hostname Sensor hostname
+    # @option attributes [String] :name Sensor name
+    # @option attributes [String] :interface Sensor interface
+    # 
     def update(attributes={})
       return self if attributes.empty?
       

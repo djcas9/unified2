@@ -28,7 +28,7 @@ module Unified2
     #
     # Time of creation for the unified2 packet.
     #
-    # @return [Time] Packet time object
+    # @return [Time, nil] Packet time object
     #
     def packet_time
       if @packet_data.has_key?(:packet_second)
@@ -57,7 +57,7 @@ module Unified2
     #
     # The event timestamp created by unified2.
     #
-    # @return [Time] Event time object
+    # @return [Time, nil] Event time object
     #
     def event_time
       if @packet_data.has_key?(:event_second)
@@ -71,7 +71,7 @@ module Unified2
     #
     # The event time in microseconds.
     #
-    # @return [String] Event microseconds
+    # @return [String, nil] Event microseconds
     #
     def microseconds
       if @event_data.has_key?(:event_microsecond)
@@ -91,7 +91,7 @@ module Unified2
     #
     # Packet Action
     #
-    # @return [Integer] Packet action
+    # @return [Integer, nil] Packet action
     #
     def packet_action
       if @event_data.has_key?(:event_second)
@@ -115,15 +115,13 @@ module Unified2
     # @return [Classification] Event classification object
     #
     def classification
-      if @event_data.is_a?(Hash)
-        @classification = Classification.new(@event_data[:classification]) if @event_data[:classification]
-      end
+      @classification = Classification.new(@event_data[:classification]) if @event_data[:classification]
     end
 
     #
     # Signature
     #
-    # @return [Signature] Event signature object
+    # @return [Signature, nil] Event signature object
     #
     def signature
       if @event_data.is_a?(Hash)
@@ -148,8 +146,9 @@ module Unified2
     #
     # @return [Integer] Event source port
     #
-    # @note #source_port will return zero if
-    # the event protocol is icmp.
+    # @note 
+    #   Event#source_port will return zero if the 
+    #   event protocol is icmp.
     #
     def source_port
       return 0 if protocol.icmp?
@@ -173,8 +172,9 @@ module Unified2
     #
     # @return [Integer] Event destination port
     #
-    # @note #destination_port will return zero if
-    # the event protocol is icmp.
+    # @note 
+    #   Event#destination_port will return zero if the 
+    #   event protocol is icmp.
     #
     def destination_port
       return 0 if protocol.icmp?
@@ -187,13 +187,17 @@ module Unified2
     # @return [Integer] Event severity id
     #
     def severity
-      @severity = @event_data[:priority_id] if @event_data.has_key?(:priority_id)
+      @severity = @event_data[:priority_id].to_i
     end
 
     #
     # Packet
     # 
     # @return [Packet] Event packet object
+    # 
+    # @note
+    #   Please view the packetfu documentation for more
+    #   information. (http://code.google.com/p/packetfu/)
     # 
     def packet
       @packet = PacketFu::Packet.parse(@packet_data[:packet])
@@ -202,7 +206,7 @@ module Unified2
     #
     # Payload
     #
-    # @return [Payload] Description
+    # @return [Payload] Event payload object
     #
     def payload
       Payload.new(packet.payload, @packet_data)
@@ -214,7 +218,9 @@ module Unified2
     # Initializes the raw data returned by
     # bindata into a more comfurtable format.
     # 
-    # @param [Event] Name Description
+    # @param [Hash] Name Description
+    # 
+    # @return [nil]
     # 
     def load(event)
       if event.data.respond_to?(:signature_id)
