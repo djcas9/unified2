@@ -1,6 +1,9 @@
 require 'hexdump'
 
 module Unified2
+  #
+  # Payload
+  #
   class Payload
 
     attr_accessor :linktype, :length, :packet

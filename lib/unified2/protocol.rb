@@ -1,4 +1,7 @@
 module Unified2
+  #
+  # Protocol
+  #
   class Protocol
     
     #

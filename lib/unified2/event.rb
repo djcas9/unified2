@@ -9,11 +9,12 @@ require 'ipaddr'
 require 'json'
 
 module Unified2
-
+  #
+  # Event
+  #
   class Event
 
     attr_accessor :id, :event_data, :packet_data
-
     #
     # Initialize event
     #

@@ -11,7 +11,9 @@ Unified2.configuration do
 
   # Load signatures, generators & classifications into memory
   load :signatures, 'seeds/sid-msg.map'
+  
   load :generators, 'seeds/gen-msg.map'
+  
   load :classifications, 'seeds/classification.config'
   
 end

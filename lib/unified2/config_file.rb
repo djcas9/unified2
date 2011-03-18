@@ -1,4 +1,7 @@
 module Unified2
+  #
+  # Configuration file
+  #
   class ConfigFile
 
     attr_accessor :type, :path, :md5, :data
@@ -15,6 +18,10 @@ module Unified2
       @data = {}
       @md5 = Digest::MD5.hexdigest(@path)
       import
+    end
+    
+    def size
+      @data.size
     end
 
     private
@@ -38,7 +45,7 @@ module Unified2
             count += 1
 
             data = line.gsub!(/config classification: /, '')
-            short, name, severity = data.to_s.split(',')
+            short, name, severity = data.to_s.split(',').map(&:strip)
 
             @data[count.to_s] = {
               :short => short,
@@ -51,13 +58,13 @@ module Unified2
 
           file.each_line do |line|
             next if line[/^\#/]
-            generator_id, alert_id, name = line.split(' || ')
+            generator_id, alert_id, name = line.split(' || ').map(&:strip)
             id = "#{generator_id}.#{alert_id}"
 
             @data[id] = {
-              :generator_id => generator_id,
+              :generator_id => generator_id.to_i,
               :name => name,
-              :signature_id => alert_id
+              :signature_id => alert_id.to_i
             }
           end
 
@@ -65,7 +72,7 @@ module Unified2
 
           file.each_line do |line|
             next if line[/^\#/]
-            id, body, *reference_data = line.split(' || ')
+            id, body, *reference_data = line.split(' || ').map(&:strip)
             
             references = {}
             reference_data.each do |line|
@@ -78,7 +85,7 @@ module Unified2
             end
             
             @data[id] = {
-              :signature_id => id,
+              :signature_id => id.to_i,
               :name => body,
               :generator_id => 1
             }

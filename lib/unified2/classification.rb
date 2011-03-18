@@ -1,4 +1,7 @@
 module Unified2
+  #
+  # Classification
+  # 
   class Classification
 
     attr_accessor :id, :name, :short, :severity

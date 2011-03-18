@@ -1,4 +1,7 @@
 module Unified2
+  #
+  # Sensor
+  #
   class Sensor
     
     attr_accessor :id, :hostname, :interface, :name, :checksum

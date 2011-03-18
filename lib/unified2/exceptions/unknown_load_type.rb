@@ -1,4 +1,7 @@
 module Unified2
-  class UnknownLoadType < StandardError
-  end
-end
+  #
+  # Unknown Load Type
+  # 
+  class UnknownLoadType < StandardError; end # class UnknownLoadType
+  
+end # module Unified2

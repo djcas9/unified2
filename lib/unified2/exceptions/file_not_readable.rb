@@ -1,4 +1,7 @@
 module Unified2
-  class FileNotReadable < StandardError
-  end
-end
+  #
+  # File Not Readable
+  # 
+  class FileNotReadable < StandardError; end # class FileNotReadable
+  
+end # module Unified2

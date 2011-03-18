@@ -9,25 +9,59 @@ require 'unified2/event'
 require 'unified2/exceptions'
 require 'unified2/version'
 
+#
+# Unified2 Namespace
+# 
 module Unified2
-
+  
+  #
+  # Configuration File Types
+  # 
+  # Holds the available configuration
+  # file types current supported.
+  # 
   TYPES = [
     :signatures,
     :generators,
     :classifications
   ]
-
+  
   class << self
     attr_accessor :signatures, :generators,
       :sensor, :hostname, :interface,
       :classifications
   end
 
+  #
+  # Configuration
+  # 
+  # @param [Hash] options Sensor Configuration
+  # @param [Block] block Configurations
+  # 
+  # @option options [Integer] :id Sensor id
+  # @option options [String] :name Sensor name
+  # @option options [String] :interface Sensor interface
+  # 
+  # @return [nil]
+  # 
   def self.configuration(options={}, &block)
-    @sensor ||= Sensor.new
+    @sensor ||= Sensor.new(options)
     self.instance_eval(&block)
   end
-
+  
+  #
+  # Sensor
+  # 
+  # @param [Hash] options Sensor Configuration
+  # @param [Block] block Sensor attributes
+  # 
+  # @option options [Integer] :id Sensor id
+  # @option options [String] :hostname Sensor hostname
+  # @option options [String] :name Sensor name
+  # @option options [String] :interface Sensor interface
+  #
+  # @return [nil]
+  # 
   def self.sensor(options={}, &block)
     if block
       @sensor.instance_eval(&block)
@@ -35,6 +69,17 @@ module Unified2
     @sensor.update(options)
   end
 
+  #
+  # Load
+  # 
+  # @param [String] type Configuration type
+  # @param [String] path Configuration path
+  # 
+  # @return [nil]
+  # 
+  # @raise [FileNotReadable] Path not readable
+  # @raise [FileNotFound] File not found
+  # 
   def self.load(type, path)
     unless TYPES.include?(type.to_sym)
       raise UnknownLoadType, "Error - #{@type} is unknown."
@@ -51,6 +96,20 @@ module Unified2
     end
   end
 
+  #
+  # Watch
+  # 
+  # Monitor the unified2 file for events and process.
+  # 
+  # @param [String] path Unified2 file path
+  # @param [String,Symbol,Integer] position IO position
+  # @param [Block] block Event object
+  # 
+  # @raise [FileNotReadable] Path not readable
+  # @raise [FileNotFound] File not found
+  # 
+  # @return [nil]
+  # 
   def self.watch(path, position=:first, &block)
 
     unless File.exists?(path)
@@ -115,7 +174,21 @@ module Unified2
       raise FileNotReadable, "Error - #{path} not readable."
     end
   end
-
+  
+  #
+  # Read
+  # 
+  # Read the unified2 log until EOF and process
+  # events.
+  # 
+  # @param [String] path Unified2 file path
+  # @param [Block] block Event object
+  # 
+  # @raise [FileNotReadable] Path not readable
+  # @raise [FileNotFound] File not found
+  # 
+  # @return [nil]
+  #
   def self.read(path, &block)
 
     unless File.exists?(path)

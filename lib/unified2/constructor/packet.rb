@@ -1,7 +1,6 @@
 module Unified2
   
   module Constructor
-    
     #
     # Event Packet
     #
