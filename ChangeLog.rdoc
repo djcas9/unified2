@@ -1,17 +1,21 @@
-=== 0.3.2 / 2011-03-15
+=== 0.4.0 / 2011-03-14
+
+* added checksum support for sensor
+
+=== 0.3.2 / 2011-03-14
 
 * fix broken example scripts
 
-=== 0.3.1 / 2011-03-15
+=== 0.3.1 / 2011-03-14
 
 * Removed gibbler in favor of custom Event#checksum method due to datamapper issues.
 
-=== 0.3.0 / 2011-03-14
+=== 0.3.0 / 2011-03-13
 
 * Added checksum support for event objects
 * Fixed example signature filename typo
 
-=== 0.2.1 / 2011-03-15
+=== 0.2.1 / 2011-03-12
 
 * minor bug fixes and typos
 

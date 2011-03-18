@@ -1,7 +1,7 @@
 module Unified2
   class Sensor
     
-    attr_accessor :id, :hostname, :interface, :name
+    attr_accessor :id, :hostname, :interface, :name, :checksum
     
     #
     # Initialize sensor object
@@ -17,6 +17,7 @@ module Unified2
       @name = options[:name] || ""
       @hostname ||= Socket.gethostname
       @interface ||= options[:interface] || nil
+      @checksum = nil
     end
     
     #
