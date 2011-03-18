@@ -1,6 +1,5 @@
 $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
 
-require 'mephux/packetfu'
 require 'unified2'
 require 'pp'
 
