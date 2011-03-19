@@ -214,7 +214,6 @@ module Unified2
     end
   end
 
-
   private
 
     def self.check_event(event, block)

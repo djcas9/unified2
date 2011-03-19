@@ -3,18 +3,6 @@ require 'unified2'
 
 describe Unified2 do
 
-  before(:all) do
-    Unified2.configuration do
-      sensor :interface => 'en1',
-        :name => 'Example Sensor',
-        :hostname => 'W0ots.local'
-
-      load :signatures, 'example/seeds/sid-msg.map'
-      load :generators, 'example/seeds/gen-msg.map'
-      load :classifications, 'example/seeds/classification.config'
-    end
-  end
-
   it "should have a VERSION constant" do
     subject.const_get('VERSION').should_not be_empty
   end
