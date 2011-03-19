@@ -11,6 +11,26 @@ describe Event do
     @event.to_i.should == 1
   end
 
+  it "should have an event time" do
+    @event.timestamp.to_s.should == '2010-10-05 22:50:18 -0400'
+  end
+
+  it "should have a sensor id" do
+    @event.sensor.id.should == 50000000000
+  end
+  
+  it "should have a sensor name" do
+    @event.sensor.name.should == "Example Sensor"
+  end
+  
+  it "should have a sensor interface" do
+    @event.sensor.interface.should == "en1"
+  end
+  
+  it "should have a sensor hostname" do
+    @event.sensor.hostname.should == "W0ots.local"
+  end
+
   it "should have a source address" do
     @event.source_ip.should == "24.19.7.110"
   end
@@ -36,7 +56,7 @@ describe Event do
   end
 
   it "should have an event checksum" do
-    @event.checksum.should == "eae6d33ed0ce052e9eb92afd11fd71aa"
+    @event.checksum.should == "6e96db6e8fe649c939711400ea4625eb"
   end
 
   it "should have a signature id" do
@@ -74,6 +94,19 @@ describe Event do
 
   it "should have a classification name" do
     @event.classification.name.should == "Misc activity"
+  end
+  
+  it "should have a payload thats not blank" do
+    @event.payload.blank?.should == false
+  end
+  
+  it "should have a hex payload" do
+    p = "000000004520008323bc000032113a080a0001061813076e90c84fac006fe498"
+    @event.payload.hex.should == p
+  end
+  
+  it "should have a payload length" do
+    @event.payload.length.should == 70
   end
 
 end

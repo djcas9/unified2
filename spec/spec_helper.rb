@@ -40,7 +40,8 @@ end
 Unified2.configuration do
   sensor :interface => 'en1',
     :name => 'Example Sensor',
-    :hostname => 'W0ots.local'
+    :hostname => 'W0ots.local',
+    :id => 50000000000
 
   load :signatures, 'example/seeds/sid-msg.map'
   load :generators, 'example/seeds/gen-msg.map'
