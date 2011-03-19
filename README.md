@@ -66,7 +66,7 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
 
 	`$ gem install unified2`
 
-== Copyright
+## Copyright
 
 Copyright (c) 2011 Dustin Willis Webber
 
