@@ -60,6 +60,7 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
  * bindata ~> 1.3.1
  * hexdump: ~> 0.1.0
  * packetfu: ~> 1.0.0
+ * pcaprub: ~> 0.9.2
 
 ## Install
 
