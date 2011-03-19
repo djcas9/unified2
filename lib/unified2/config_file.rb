@@ -20,6 +20,11 @@ module Unified2
       import
     end
     
+    #
+    # Size
+    # 
+    # @return [Integer] Configuration size
+    # 
     def size
       @data.size
     end

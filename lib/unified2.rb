@@ -36,7 +36,7 @@ module Unified2
   # Configuration
   # 
   # @param [Hash] options Sensor Configuration
-  # @param [Block] block Configurations
+  # @yield [ConfigFile] block Configurations
   # 
   # @option options [Integer] :id Sensor id
   # @option options [String] :name Sensor name
@@ -53,7 +53,7 @@ module Unified2
   # Sensor
   # 
   # @param [Hash] options Sensor Configuration
-  # @param [Block] block Sensor attributes
+  # @yield [Sensor] block Sensor attributes
   # 
   # @option options [Integer] :id Sensor id
   # @option options [String] :hostname Sensor hostname
@@ -103,7 +103,7 @@ module Unified2
   # 
   # @param [String] path Unified2 file path
   # @param [String,Symbol,Integer] position IO position
-  # @param [Block] block Event object
+  # @yield [Event] block Event object
   # 
   # @raise [FileNotReadable] Path not readable
   # @raise [FileNotFound] File not found
@@ -182,7 +182,7 @@ module Unified2
   # events.
   # 
   # @param [String] path Unified2 file path
-  # @param [Block] block Event object
+  # @yield [Event] block Event object
   # 
   # @raise [FileNotReadable] Path not readable
   # @raise [FileNotFound] File not found

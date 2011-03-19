@@ -4,7 +4,7 @@ module Unified2
   #
   class Signature
     
-    attr_accessor :id, :generator, :revision, :name
+    attr_accessor :id, :generator, :revision, :name, :blank
 
     #
     # Initialize signature object
@@ -22,7 +22,7 @@ module Unified2
       @generator = signature[:generator_id]
       @revision = signature[:revision]
       @name = signature[:name].strip
-      @blank = signature[:blank]
+      @blank = signature[:blank] || false
     end
 
     #

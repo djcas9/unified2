@@ -7,12 +7,19 @@ describe Unified2 do
     subject.const_get('VERSION').should_not be_empty
   end
   
+  it "should have a TYPES constant" do
+    subject.const_get('TYPES').should_not be_empty
+  end
+  
   it "should have the correct signature size" do
     Unified2.signatures.size.should == 16710
   end
   
   it "should have the correct signature name" do
-    Unified2.signatures.data['16710'][:name].should == "EXPLOIT Oracle BEA Weblogic server console-help.portal cross-site scripting attempt"
+    signature_name = "EXPLOIT Oracle BEA Weblogic server " \
+    "console-help.portal cross-site scripting attempt"
+    
+    Unified2.signatures.data['16710'][:name].should == signature_name
   end
   
   it "should have the correct signature id" do
@@ -32,7 +39,8 @@ describe Unified2 do
   end
   
   it "should have the correct classification name" do
-    Unified2.classifications.data['35'][:name].should == "Sensitive Data was Transmitted Across the Network"
+    classification_name = "Sensitive Data was Transmitted Across the Network"
+    Unified2.classifications.data['35'][:name].should == classification_name
   end
   
   it "should have the correct classification short name" do
@@ -48,7 +56,8 @@ describe Unified2 do
   end
   
   it "should have the correct generator name" do
-    Unified2.generators.data["138.6"][:name].should == "sensitive_data: sensitive data - U.S. phone numbers"
+    generator_name = "sensitive_data: sensitive data - U.S. phone numbers"
+    Unified2.generators.data["138.6"][:name].should == generator_name
   end
   
   it "should have the correct generator signature id" do

@@ -1,7 +1,5 @@
 $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
-
 require 'unified2'
-require 'pp'
 
 # Unified2 Configuration
 Unified2.configuration do
