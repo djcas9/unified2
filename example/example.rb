@@ -23,9 +23,8 @@ end
 # sensor table it will begin at the first available event.
 Unified2.watch('/var/log/snort/merged.log', :first) do |event|
   next if event.signature.blank?
-  next unless event.protocol.tcp?
 
-  puts event.ip_header
-  puts "\n\n"
+  puts event
+  puts "\n"
 
 end

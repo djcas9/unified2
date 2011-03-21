@@ -1,3 +1,8 @@
+=== 0.5.1 / 2011-03-21
+
+* fixed exception when watching an empty unified2 log file
+* renamed a few Event#ip_header hash keys
+
 === 0.5.0 / 2011-03-18
 
 * major refactoring
