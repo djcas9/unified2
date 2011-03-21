@@ -302,7 +302,7 @@ module Unified2
           :ip_tos => packet.ip_header.ip_tos,
           :ip_len => packet.ip_header.ip_len,
           :ip_id => packet.ip_header.ip_id,
-          :ip_frags => packet.ip_header.ip_frag,
+          :ip_frag => packet.ip_header.ip_frag,
           :ip_ttl => packet.ip_header.ip_ttl,
           :ip_proto => packet.ip_header.ip_proto,
           :ip_csum => packet.ip_header.ip_sum
