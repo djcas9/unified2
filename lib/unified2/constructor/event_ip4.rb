@@ -1,4 +1,4 @@
-require 'unified2/primitive/ipv4'
+require 'unified2/constructor/primitive/ipv4'
 
 module Unified2
 
