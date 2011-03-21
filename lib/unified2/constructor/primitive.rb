@@ -1,1 +1,1 @@
-require 'primitive/ipv4'
+require 'unified2/constructor/primitive/ipv4'
