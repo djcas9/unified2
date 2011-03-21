@@ -1,5 +1,4 @@
 $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
-require 'mephux/packetfu'
 require 'unified2'
 
 # Unified2 Configuration
@@ -26,5 +25,5 @@ Unified2.watch('/var/log/snort/merged.log', :first) do |event|
 
   puts event
   puts "\n"
-
+  
 end

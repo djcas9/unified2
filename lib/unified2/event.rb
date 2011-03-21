@@ -267,29 +267,6 @@ module Unified2
     end
 
     #
-    # Ethernet Header
-    # 
-    # @return [Hash] Ethernet header
-    # 
-    def eth_header
-      if ((packet.is_eth?) && packet.has_data?)
-        @ip_header = {
-          :v => payload.packet.ip_header.ip_v,
-          :hl => payload.packet.ip_header.ip_hl,
-          :tos => payload.packet.ip_header.ip_tos,
-          :len => payload.packet.ip_header.ip_len,
-          :id => payload.packet.ip_header.ip_id,
-          :frags => payload.packet.ip_header.ip_frag,
-          :ttl => payload.packet.ip_header.ip_ttl,
-          :proto => payload.packet.ip_header.ip_proto,
-          :sum => payload.packet.ip_header.ip_sum
-        }
-      else
-        @ip_header = {}
-      end
-    end
-
-    #
     # IP Header
     # 
     # @return [Hash] IP header

@@ -126,7 +126,6 @@ module Unified2
           :hlen => header.tcp_hlen,
           :reserved => header.tcp_reserved,
           :ecn => header.tcp_ecn,
-          :opts => header.tcp_opts,
           :opts_len => header.tcp_opts_len,
           :rand_port => header.rand_port,
           :options => header.tcp_options
