@@ -1,4 +1,5 @@
 $:.unshift File.join(File.dirname(__FILE__), "..", "lib")
+require 'mephux/packetfu'
 require 'unified2'
 
 # Unified2 Configuration
@@ -9,7 +10,7 @@ Unified2.configuration do
 
   # Load signatures, generators & classifications into memory
   load :signatures, 'seeds/sid-msg.map'
-  
+
   load :generators, 'seeds/gen-msg.map'
   
   load :classifications, 'seeds/classification.config'
@@ -20,9 +21,11 @@ end
 # The second argument is the last event processed by
 # the sensor. If the last_event_id column is blank in the
 # sensor table it will begin at the first available event.
-Unified2.watch('seeds/unified2.log', :first) do |event|
+Unified2.watch('/var/log/snort/merged.log', :first) do |event|
   next if event.signature.blank?
+  next unless event.protocol.tcp?
 
-  puts event
+  puts event.ip_header
+  puts "\n\n"
 
 end

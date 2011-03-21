@@ -107,7 +107,7 @@ module Unified2
       def udp(include_body=false)
         @udp = {
           :length => header.len,
-          :sum => header.udp_sum,
+          :csum => header.udp_sum,
         }
         
         @udp[:body] = header.body if include_body
@@ -121,7 +121,7 @@ module Unified2
           :seq => header.tcp_seq,
           :ack => header.tcp_ack,
           :win => header.tcp_win,
-          :sum => header.tcp_sum,
+          :csum => header.tcp_sum,
           :urg => header.tcp_urg,
           :hlen => header.tcp_hlen,
           :reserved => header.tcp_reserved,

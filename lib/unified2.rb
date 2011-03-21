@@ -142,12 +142,18 @@ module Unified2
           event_id = false
 
         when :first
-
-          first_open = File.open(path)
-          first_event = Unified2::Constructor::Construct.read(first_open)
-          first_open.close
-          event_id = first_event.data.event_id
-          @event = Event.new(event_id)
+          begin
+            
+            first_open = File.open(path)
+            first_event = Unified2::Constructor::Construct.read(first_open)
+            first_open.close
+            event_id = first_event.data.event_id
+            @event = Event.new(event_id)
+  
+          rescue EOFError
+            sleep 5
+            retry
+          end
 
         end
       end

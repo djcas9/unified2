@@ -279,7 +279,7 @@ module Unified2
           :tos => payload.packet.ip_header.ip_tos,
           :len => payload.packet.ip_header.ip_len,
           :id => payload.packet.ip_header.ip_id,
-          :frag => payload.packet.ip_header.ip_frag,
+          :frags => payload.packet.ip_header.ip_frag,
           :ttl => payload.packet.ip_header.ip_ttl,
           :proto => payload.packet.ip_header.ip_proto,
           :sum => payload.packet.ip_header.ip_sum
@@ -297,15 +297,15 @@ module Unified2
     def ip_header
       if ((packet.is_ip?) && packet.has_data?)
         @ip_header = {
-          :v => packet.ip_header.ip_v,
-          :hl => packet.ip_header.ip_hl,
-          :tos => packet.ip_header.ip_tos,
-          :len => packet.ip_header.ip_len,
-          :id => packet.ip_header.ip_id,
-          :frag => packet.ip_header.ip_frag,
-          :ttl => packet.ip_header.ip_ttl,
-          :proto => packet.ip_header.ip_proto,
-          :sum => packet.ip_header.ip_sum
+          :ip_ver => packet.ip_header.ip_v,
+          :ip_hlen => packet.ip_header.ip_hl,
+          :ip_tos => packet.ip_header.ip_tos,
+          :ip_len => packet.ip_header.ip_len,
+          :ip_id => packet.ip_header.ip_id,
+          :ip_frags => packet.ip_header.ip_frag,
+          :ip_ttl => packet.ip_header.ip_ttl,
+          :ip_proto => packet.ip_header.ip_proto,
+          :ip_csum => packet.ip_header.ip_sum
         }
       else
         @ip_header = {}
