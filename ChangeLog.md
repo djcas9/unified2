@@ -1,3 +1,11 @@
+=== 0.5.3 / 2011-03-24
+
+* remove unnecessary file (untitled.rb)
+
+=== 0.5.2 / 2011-03-24
+
+* Add payload checksum support
+
 === 0.5.1 / 2011-03-21
 
 * fixed exception when watching an empty unified2 log file
