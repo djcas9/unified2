@@ -98,6 +98,17 @@ module Unified2
     def dump(options={})
       Hexdump.dump(@packet, options)
     end
+    
+    #
+    # Checksum
+    #
+    # Create a unique payload checksum
+    #
+    # @return [String] Payload checksum
+    #
+    def checksum
+      Digest::MD5.hexdigest(@packet)
+    end
 
   end
 end

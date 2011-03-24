@@ -305,8 +305,10 @@ module Unified2
         Destination IP: #{destination_ip}:#{destination_port}
         Signature: #{signature.name}
         Classification: #{classification.name}
+        Event Checksum: #{checksum}
       }
       unless payload.blank?
+        data += "Payload Checksum: #{payload.checksum}\n"
         data += "Payload:\n"
         payload.dump(:width => 30, :output => data)
       end
