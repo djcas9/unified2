@@ -12,6 +12,6 @@ dependencies:
   hexdump: ~> 0.2
   
 development_dependencies:
-  ore-tasks: ~> 0.4
+  ore-tasks: ~> 0.5
   rspec: ~> 2.4
   yard: ~> 0.6.0
