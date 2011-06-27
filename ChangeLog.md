@@ -1,3 +1,10 @@
+=== 0.5.4 / 2011-06-27
+
+* update packetfu ~> 1.1
+* update bindata ~> 1.4
+* update hexdump ~> 0.2
+* remove pcaprb dep
+
 === 0.5.3 / 2011-03-24
 
 * remove unnecessary file (untitled.rb)
