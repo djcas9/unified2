@@ -59,10 +59,9 @@ end
 
 ## Requirements
 
- * bindata ~> 1.3.1
- * hexdump: ~> 0.1.0
- * packetfu: ~> 1.0.0
- * pcaprub: ~> 0.9.2
+ * bindata ~> 1.4.x
+ * hexdump: ~> 0.2.x
+ * packetfu: ~> 1.1.x
 
 ## Install
 
