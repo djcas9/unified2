@@ -12,7 +12,7 @@ describe Unified2 do
   end
   
   it "should have the correct signature size" do
-    Unified2.signatures.size.should == 16710
+    Unified2.signatures.size.should == 16711
   end
   
   it "should have the correct signature name" do
