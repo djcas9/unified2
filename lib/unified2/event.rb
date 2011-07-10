@@ -241,6 +241,13 @@ module Unified2
     def to_h
       @to_hash = {}
       
+      unless payload.blank?
+        hexdump = ''
+        payload.dump(:width => 30, :output => hexdump)
+        @packet_data[:packet] = hexdump
+      end
+      #.encode('utf-8', 'iso-8859-1')
+      
       [@event_data, @packet_data].each do |hash|
         @to_hash.merge!(hash) if hash.is_a?(Hash)
       end

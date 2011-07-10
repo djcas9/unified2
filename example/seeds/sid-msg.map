@@ -16708,3 +16708,4 @@
 18241 || WEB-ACTIVEX Microsoft WMI Administrator Tools Object Viewer ActiveX clsid access || url,secunia.com/advisories/42693/
 18242 || WEB-ACTIVEX Microsoft WMI Administrator Tools Object Viewer ActiveX function call access || url,secunia.com/advisories/42693/
 18243 || SPECIFIC-THREATS Microsoft Windows 7 IIS7.5 FTPSVC buffer overflow attempt || bugtraq,45542
+1000001 || Unified2 Example Rule || cve,2011-31337
