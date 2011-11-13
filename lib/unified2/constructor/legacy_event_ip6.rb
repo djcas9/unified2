@@ -2,9 +2,9 @@ module Unified2
   
   module Constructor
     #
-    # Event IP Version 6
+    # Legacy Event IP Version 6
     #
-    class EventIP6 < ::BinData::Record
+    class LegacyEventIP6 < ::BinData::Record
       
       endian    :big
 
@@ -36,18 +36,8 @@ module Unified2
       
       uint8     :protocol
       
-      uint8     :impact_flag
-
-      uint8     :impact
-
-      uint8     :blocked
-
-      uint32    :mpls_label
-
-      uint16    :vlanId
-
-      uint16    :pad2
-
+      uint8     :packet_action
+      
     end # class EventIP6
     
   end # module Constructor

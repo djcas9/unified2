@@ -1,11 +1,13 @@
+require 'unified2/constructor/primitive/ipv4'
+
 module Unified2
-  
+
   module Constructor
     #
-    # Event IP Version 6
-    #
-    class EventIP6 < ::BinData::Record
-      
+    # Legacy Event IP Version 4
+    # 
+    class LegacyEventIP4 < ::BinData::Record
+
       endian    :big
 
       uint32    :sensor_id
@@ -26,9 +28,9 @@ module Unified2
       
       uint32    :priority_id
       
-      uint128   :ip_source
+      ipv4      :ip_source
       
-      uint128   :ip_destination
+      ipv4      :ip_destination
       
       uint16    :sport_itype
       
@@ -36,20 +38,10 @@ module Unified2
       
       uint8     :protocol
       
-      uint8     :impact_flag
+      uint8     :packet_action
+      
+    end # class EventIP4
 
-      uint8     :impact
-
-      uint8     :blocked
-
-      uint32    :mpls_label
-
-      uint16    :vlanId
-
-      uint16    :pad2
-
-    end # class EventIP6
-    
   end # module Constructor
-  
+
 end # module Unified2

@@ -1,6 +1,7 @@
+require 'unified2/extra'
 require 'unified2/classification'
+require 'unified2/packet'
 require 'unified2/payload'
-require 'unified2/protocol'
 require 'unified2/sensor'
 require 'unified2/signature'
 
@@ -14,7 +15,12 @@ module Unified2
   #
   class Event
 
-    attr_accessor :id, :event_data, :packet_data
+    EVENT_TYPES = [7, 72, 104, 105]
+    EXTRA = [ 110 ]
+    LEGACY_EVENT_TYPES = [7, 72]
+    PACKET_TYPES = [2]
+
+    attr_accessor :id, :event, :packets, :extras
     #
     # Initialize event
     #
@@ -22,6 +28,8 @@ module Unified2
     #
     def initialize(id)
       @id = id.to_i
+      @packets = []
+      @extras = []
     end
 
     #
@@ -61,9 +69,7 @@ module Unified2
     # @return [Time, nil] Event time object
     #
     def event_time
-      if @packet_data.has_key?(:event_second)
-        @timestamp = Time.at(@packet_data[:event_second].to_i)
-      end
+      Time.at(@event_data[:timestamp].to_i)
     end
     alias :timestamp :event_time
 
@@ -75,9 +81,7 @@ module Unified2
     # @return [String, nil] Event microseconds
     #
     def microseconds
-      if @event_data.has_key?(:event_microsecond)
-        @microseconds = @event_data[:event_microsecond]
-      end
+      @event_data[:event_microsecond]
     end
 
     #
@@ -95,9 +99,34 @@ module Unified2
     # @return [Integer, nil] Packet action
     #
     def packet_action
-      if @event_data.has_key?(:event_second)
-        @packet_data_action = @event_data[:packet_action]
-      end
+      @event_data[:packet_action]
+    end
+
+    #
+    # ICMP?
+    # 
+    # @return [true, false] Check is protocol is icmp
+    # 
+    def icmp?
+      protocol == :ICMP
+    end
+
+    #
+    # TCP?
+    # 
+    # @return [true, false] Check is protocol is tcp
+    #
+    def tcp?
+      protocol == :TCP
+    end
+
+    #
+    # UDP?
+    # 
+    # @return [true, false] Check is protocol is udp
+    #
+    def udp?
+      protocol == :UDP
     end
 
     #
@@ -106,9 +135,8 @@ module Unified2
     # @return [Protocol] Event protocol object
     #
     def protocol
-      @protocol = Protocol.new(determine_protocol(@event_data[:protocol]), packet)
+      @protocol ||= determine_protocol
     end
-
 
     #
     # Classification
@@ -116,7 +144,7 @@ module Unified2
     # @return [Classification] Event classification object
     #
     def classification
-      @classification = Classification.new(@event_data[:classification]) if @event_data[:classification]
+      Classification.new(@event_data[:classification])
     end
 
     #
@@ -125,9 +153,7 @@ module Unified2
     # @return [Signature, nil] Event signature object
     #
     def signature
-      if @event_data.is_a?(Hash)
-        @signature = Signature.new(@event_data[:signature])
-      end
+      @signature ||= Signature.new(@event_data[:signature])
     end
 
     #
@@ -136,9 +162,7 @@ module Unified2
     # @return [IPAddr] Event source ip address
     #
     def ip_source
-      if @event_data.is_a?(Hash)
-        @event_data[:ip_source] if @event_data.has_key?(:ip_source)
-      end
+      @event_data[:source_ip]
     end
     alias :source_ip :ip_source
 
@@ -152,8 +176,7 @@ module Unified2
     #   event protocol is icmp.
     #
     def source_port
-      return 0 if protocol.icmp?
-      @source_port = @event_data[:sport_itype] if @event_data.has_key?(:sport_itype)
+      @event_data[:source_port]
     end
 
     #
@@ -162,9 +185,7 @@ module Unified2
     # @return [IPAddr] Event destination ip address
     #
     def ip_destination
-      if @event_data.is_a?(Hash)
-        @event_data[:ip_destination] if @event_data.has_key?(:ip_destination)
-      end
+      @event_data[:destination_ip]
     end
     alias :destination_ip :ip_destination
 
@@ -178,8 +199,7 @@ module Unified2
     #   event protocol is icmp.
     #
     def destination_port
-      return 0 if protocol.icmp?
-      @source_port = @event_data[:dport_icode] if @event_data.has_key?(:dport_icode)
+      @event_data[:destination_port]
     end
 
     #
@@ -192,45 +212,66 @@ module Unified2
     end
 
     #
-    # Packet
-    # 
-    # @return [Packet] Event packet object
-    # 
-    # @note
-    #   Please view the packetfu documentation for more
-    #   information. (http://code.google.com/p/packetfu/)
-    # 
-    def packet
-      @packet = PacketFu::Packet.parse(@packet_data[:packet])
+    # Packets
+    #
+    def packets
+      return @packets unless block_given?
+      @packets.each { |packet| yield packet }
     end
 
     #
-    # Payload
+    # Has Packet Data
     #
-    # @return [Payload] Event payload object
+    # @return [True,False] Does the event have packet data?
     #
-    def payload
-      Payload.new(packet.payload, @packet_data)
+    def packets?
+      @packets.empty?
     end
-    
+
+    #
+    #
+    #
+    def extras
+      return @extras unless block_given?
+      @extras.each { |extra| yield extra }      
+    end
+
+    #
+    # Has Extra Data
+    #
+    # @return [True,False] Does the event have extra data?
+    #
+    def extras?
+      @extras.empty?
+    end
+
     #
     # Load
     # 
     # Initializes the raw data returned by
-    # bindata into a more comfurtable format.
+    # bindata into a more comfortable format.
     # 
     # @param [Hash] Name Description
     # 
     # @return [nil]
     # 
     def load(event)
-      if event.data.respond_to?(:signature_id)
-        @event_data ||= build_event_data(event)
+
+      if EXTRA.include?(event.header.u2type)
+        extra = Extra.new(event)
+        @extras.push(extra)
       end
 
-      if event.data.respond_to?(:packet_data)
-        @packet_data ||= build_packet_data(event)
+      if EVENT_TYPES.include?(event.header.u2type)
+        @event = event
+        @event_data = build_event_data
       end
+
+      if PACKET_TYPES.include?(event.header.u2type)
+        packet = Packet.new(build_packet_data(event))
+        @packets.push(packet)
+      end
+
     end
 
     #
@@ -241,18 +282,23 @@ module Unified2
     def to_h
       @to_hash = {}
       
-      unless payload.blank?
-        hexdump = ''
-        payload.dump(:width => 30, :output => hexdump)
-        @packet_data[:packet] = hexdump
-      end
+      @event_data[:extras] = @extras
+      @event_data[:packets] = @packets
+
+      #unless payload.blank?
+        #hexdump = ''
+        #payload.dump(:width => 30, :output => hexdump)
+        #@packet_data[:packet] = hexdump
+      #end
+
       #.encode('utf-8', 'iso-8859-1')
       
-      [@event_data, @packet_data].each do |hash|
-        @to_hash.merge!(hash) if hash.is_a?(Hash)
-      end
+      #[@event_data, @packet_data].each do |hash|
+        #@to_hash.merge!(hash) if hash.is_a?(Hash)
+      #end
       
-      @to_hash
+      #@to_hash
+      @event_data
     end
 
     #
@@ -273,29 +319,6 @@ module Unified2
       to_h.to_json
     end
 
-    #
-    # IP Header
-    # 
-    # @return [Hash] IP header
-    #
-    def ip_header
-      if ((packet.is_ip?) && packet.has_data?)
-        @ip_header = {
-          :ip_ver => packet.ip_header.ip_v,
-          :ip_hlen => packet.ip_header.ip_hl,
-          :ip_tos => packet.ip_header.ip_tos,
-          :ip_len => packet.ip_header.ip_len,
-          :ip_id => packet.ip_header.ip_id,
-          :ip_frag => packet.ip_header.ip_frag,
-          :ip_ttl => packet.ip_header.ip_ttl,
-          :ip_proto => packet.ip_header.ip_proto,
-          :ip_csum => packet.ip_header.ip_sum
-        }
-      else
-        @ip_header = {}
-      end
-    end
-    
     #
     # Convert To String
     # 
@@ -325,109 +348,137 @@ module Unified2
 
     private
 
-      def build_event_data(event)
-        @event_hash = {}
+      def build_event_data
+        event_hash = {}
 
-        @event_hash = {
-          :ip_destination => event.data.ip_destination,
-          :priority_id => event.data.priority_id,
-          :signature_revision => event.data.signature_revision,
-          :event_id => event.data.event_id,
-          :protocol => event.data.protocol,
-          :sport_itype => event.data.sport_itype,
-          :event_second => event.data.event_second,
-          :packet_action => event.data.packet_action,
-          :dport_icode => event.data.dport_icode,
-          :sensor_id => event.data.sensor_id,
-          :generator_id => event.data.generator_id,
-          :ip_source => event.data.ip_source,
-          :event_microsecond => event.data.event_microsecond
+        event_hash = {
+          :destination_ip => @event.data.ip_destination,
+          :priority_id => @event.data.priority_id,
+          :signature_revision => @event.data.signature_revision,
+          :event_id => @event.data.event_id,
+          :protocol => @event.data.protocol,
+          :source_port => @event.data.sport_itype,
+          :timestamp => @event.data.event_second,
+          :destination_port => @event.data.dport_icode,
+          :sensor_id => @event.data.sensor_id,
+          :generator_id => @event.data.generator_id,
+          :source_ip => @event.data.ip_source,
+          :event_microsecond => @event.data.event_microsecond
         }
 
-        build_classifications(event)
-
-        if event.data.generator_id.to_i == 1
-          build_signature(event)
+        if LEGACY_EVENT_TYPES.include?(@event.header.u2type)
+          event_hash[:packet_action] = @event.data.packet_action
         else
-          build_generator(event)
+          event_hash.merge!({
+            :impact_flag => @event.data.impact_flag,
+            :impact => @event.data.impact,
+            :blocked => @event.data.blocked,
+            :mpls_label => @event.data.mpls_label,
+            :vlan_id => @event.data.vlanId,
+            :policy_id => @event.data.pad2
+          })
         end
 
-        @event_hash
+        event_hash[:classification] = build_classifications
+
+        if @event.data.generator_id.to_i == 1
+          event_hash[:signature] = build_signature
+        else
+          event_hash[:signature] = build_generator
+        end
+
+        event_hash
       end
 
       def build_packet_data(event)
-        @packet_hash = {}
-        @packet_hash = {
+        packet_hash = {}
+        packet_hash = {
           :linktype => event.data.linktype,
           :packet_microsecond => event.data.packet_microsecond,
-          :packet_second => event.data.packet_second,
+          :packet_timestamp => event.data.packet_second,
           :packet => event.data.packet_data,
-          :event_second => event.data.event_second,
+          :timestamp => event.data.event_second,
           :packet_length => event.data.packet_length
         }
 
-        @packet_hash
+        packet_hash
       end
 
       def build_generator(event)
+        signature = {}
+
         if Unified2.generators.data
-          if Unified2.generators.data.has_key?("#{event.data.generator_id}.#{event.data.signature_id}")
-            sig = Unified2.generators.data["#{event.data.generator_id}.#{event.data.signature_id}"]
+          key = "#{@event.data.generator_id}.#{@event.data.signature_id}"
 
-            @event_hash[:signature] = {
-              :signature_id => event.data.signature_id,
-              :generator_id => event.data.generator_id,
-              :revision => event.data.signature_revision,
+          if Unified2.generators.data.has_key?(key)
+            sig = Unified2.generators.data[key]
+
+            signature = {
+              :signature_id => @event.data.signature_id,
+              :generator_id => @event.data.generator_id,
+              :revision => @event.data.signature_revision,
               :name => sig[:name],
               :blank => false
             }
           end
         end
 
-        unless @event_hash.has_key?(:signature)
-          @event_hash[:signature] = {
-            :signature_id => event.data.signature_id,
-            :generator_id => event.data.generator_id,
+        if signature.empty?
+          signature = {
+            :signature_id => @event.data.signature_id,
+            :generator_id => @event.data.generator_id,
             :revision => 0,
-            :name => "Unknown Signature #{event.data.signature_id}",
+            :name => "Unknown Signature #{@event.data.signature_id}",
             :blank => true
           }
         end
+
+        signature
       end
 
-      def build_signature(event)
+      def build_signature
+        signature = {}
+
         if Unified2.signatures.data
-          if Unified2.signatures.data.has_key?(event.data.signature_id.to_s)
-            sig = Unified2.signatures.data[event.data.signature_id.to_s]
+          key = event.data.signature_id.to_s
 
-            @event_hash[:signature] = {
-              :signature_id => event.data.signature_id,
-              :generator_id => event.data.generator_id,
-              :revision => event.data.signature_revision,
+          if Unified2.signatures.data.has_key?(key)
+            sig = Unified2.signatures.data[key]
+
+            signature = {
+              :signature_id => @event.data.signature_id,
+              :generator_id => @event.data.generator_id,
+              :revision => @event.data.signature_revision,
               :name => sig[:name],
               :blank => false
             }
           end
         end
 
-        unless @event_hash.has_key?(:signature)
-          @event_hash[:signature] = {
-            :signature_id => event.data.signature_id,
-            :generator_id => event.data.generator_id,
+        if signature.empty?
+          signature = {
+            :signature_id => @event.data.signature_id,
+            :generator_id => @event.data.generator_id,
             :revision => 0,
-            :name => "Unknown Signature #{event.data.signature_id}",
+            :name => "Unknown Signature #{@event.data.signature_id}",
             :blank => true
           }
         end
+
+        signature
       end
 
-      def build_classifications(event)
-        if Unified2.classifications.data
-          if Unified2.classifications.data.has_key?("#{event.data.classification_id}")
-            classification = Unified2.classifications.data["#{event.data.classification_id}"]
+      def build_classifications
+        classification = {}
 
-            @event_hash[:classification] = {
-              :classification_id => event.data.classification_id,
+        if Unified2.classifications.data
+          key = "#{event.data.classification_id}"
+
+          if Unified2.classifications.data.has_key?(key)
+            classification = Unified2.classifications.data[key]
+
+            classification = {
+              :classification_id => @event.data.classification_id,
               :name => classification[:name],
               :short => classification[:short],
               :severity => classification[:severity_id]
@@ -435,18 +486,20 @@ module Unified2
           end
         end
 
-        unless @event_hash.has_key?(:classification)
-          @event_hash[:classification] = {
-            :classification_id => event.data.classification_id,
+        if classification.empty?
+          classification = {
+            :classification_id => @event.data.classification_id,
             :name => 'Unknown',
             :short => 'n/a',
             :severity => 0
           }
         end
+
+        classification
       end
 
-      def determine_protocol(protocol)
-        case protocol.to_i
+      def determine_protocol
+        case @event.data.protocol.to_i
         when 1
           :ICMP # ICMP (Internet Control Message Protocol) packet type.
         when 2

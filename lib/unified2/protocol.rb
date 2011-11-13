@@ -17,28 +17,12 @@ module Unified2
     end
 
     #
-    # Protocol Header
-    # 
-    # @return [Object, nil] Protocol header object
-    # 
-    def header
-      if @packet.has_data?
-        if @packet.send(:"is_#{@protocol.downcase}?")
-          @packet.send(:"#{@protocol.downcase}_header")
-        end
-      else
-        nil
-      end
-    end
-
-    #
     # ICMP?
     # 
     # @return [true, false] Check is protocol is icmp
     # 
     def icmp?
-      return true if @protocol == :ICMP
-      false
+      @protocol == :ICMP
     end
 
     #
@@ -47,8 +31,7 @@ module Unified2
     # @return [true, false] Check is protocol is tcp
     #
     def tcp?
-      return true if @protocol == :TCP
-      false
+      @protocol == :TCP
     end
 
     #
@@ -57,8 +40,7 @@ module Unified2
     # @return [true, false] Check is protocol is udp
     #
     def udp?
-      return true if @protocol == :UDP
-      false
+      @protocol == :UDP
     end
 
     #
@@ -88,53 +70,59 @@ module Unified2
         {}
       end
     end
+    alias header to_h
 
     private
       
-      def icmp(include_body=false)
-        @icmp = {
-          :length => header.len,
-          :type => header.icmp_type,
-          :csum => header.icmp_sum,
-          :code => header.icmp_code
-        }
-        
-        @icmp[:body] = header.body if include_body
-        
-        @icmp
-      end
+    def hdr
+      return nil unless @packet.send(:"is_#{@protocol.downcase}?")
+      @packet.send(:"#{@protocol.downcase}_header")
+    end
 
-      def udp(include_body=false)
-        @udp = {
-          :length => header.len,
-          :csum => header.udp_sum,
-        }
-        
-        @udp[:body] = header.body if include_body
-        
-        @udp
-      end
+    def icmp(include_body=false)
+      icmp = {
+        :length => hdr.len,
+        :type => hdr.icmp_type,
+        :csum => hdr.icmp_sum,
+        :code => hdr.icmp_code
+      }
+      
+      icmp[:body] = hdr.body if include_body
+      
+      icmp
+    end
 
-      def tcp(include_body=false)
-        @tcp = {
-          :length => header.len,
-          :seq => header.tcp_seq,
-          :ack => header.tcp_ack,
-          :win => header.tcp_win,
-          :csum => header.tcp_sum,
-          :urg => header.tcp_urg,
-          :hlen => header.tcp_hlen,
-          :reserved => header.tcp_reserved,
-          :ecn => header.tcp_ecn,
-          :opts_len => header.tcp_opts_len,
-          :rand_port => header.rand_port,
-          :options => header.tcp_options
-        }
-        
-        @tcp[:body] = header.body if include_body
-        
-        @tcp
-      end
+    def udp(include_body=false)
+      udp = {
+        :length => hdr.len,
+        :csum => hdr.udp_sum,
+      }
+      
+      udp[:body] = hdr.body if include_body
+      
+      udp
+    end
+
+    def tcp(include_body=false)
+      tcp = {
+        :length => hdr.len,
+        :seq => hdr.tcp_seq,
+        :ack => hdr.tcp_ack,
+        :win => hdr.tcp_win,
+        :csum => hdr.tcp_sum,
+        :urg => hdr.tcp_urg,
+        :hlen => hdr.tcp_hlen,
+        :reserved => hdr.tcp_reserved,
+        :ecn => hdr.tcp_ecn,
+        :opts_len => hdr.tcp_opts_len,
+        :rand_port => hdr.rand_port,
+        :options => hdr.tcp_options
+      }
+      
+      tcp[:body] = hdr.body if include_body
+      
+      tcp
+    end
 
   end
 end

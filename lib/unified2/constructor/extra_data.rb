@@ -4,7 +4,7 @@ module Unified2
     #
     # Event Packet
     #
-    class Packet < ::BinData::Record
+    class ExtraData < ::BinData::Record
       
       endian :big
 
@@ -14,18 +14,17 @@ module Unified2
       
       uint32 :event_second
       
-      uint32 :packet_second
+      uint32 :type
       
-      uint32 :packet_microsecond
+      uint32 :data_type
       
-      uint32 :linktype
+      uint32 :blob_length
+
+      string :blob, :read_length => lambda { blob_length - 8 }
       
-      uint32 :packet_length
-      
-      string :packet_data, :read_length => :packet_length
-      
-    end # class Packet
+    end # class ExtraData
     
   end # module Constructor
   
 end # module Unified2
+

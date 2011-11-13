@@ -23,6 +23,15 @@ module Unified2
       @severity = classification[:severity]
     end
 
+    #
+    # String
+    #
+    # @return [String] Signature name
+    #
+    def to_s
+      @name
+    end
+
   end # class Classification
 
 end # module Unified2

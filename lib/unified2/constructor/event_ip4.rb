@@ -8,7 +8,7 @@ module Unified2
     # 
     class EventIP4 < ::BinData::Record
 
-      endian :big
+      endian    :big
 
       uint32    :sensor_id
       
@@ -38,10 +38,21 @@ module Unified2
       
       uint8     :protocol
       
-      uint8     :packet_action
-      
+      uint8     :impact_flag
+
+      uint8     :impact
+
+      uint8     :blocked
+
+      uint32    :mpls_label
+
+      uint16    :vlanId
+
+      uint16    :pad2
+
     end # class EventIP4
 
   end # module Constructor
 
 end # module Unified2
+

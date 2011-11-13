@@ -22,7 +22,16 @@ module Unified2
       @interface ||= options[:interface] || nil
       @checksum = nil
     end
-    
+
+    #
+    # To String
+    #
+    # @return [String] Sensor Name
+    #
+    def to_s
+      @name
+    end
+
     #
     # Update
     # 

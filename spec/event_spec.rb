@@ -36,7 +36,7 @@ describe Event do
   end
 
   it "should have a source port" do
-    @event.source_port.should == 0
+    @event.source_port.should == 3
   end
 
   it "should have a destination address" do
@@ -44,7 +44,7 @@ describe Event do
   end
 
   it "should have a destination port" do
-    @event.destination_port.should == 0
+    @event.destination_port.should == 13
   end
   
   it "should have a protocol" do

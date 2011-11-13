@@ -9,11 +9,23 @@ require 'unified2/event'
 require 'unified2/exceptions'
 require 'unified2/version'
 
+# Tested with Snort 2.9.1.2
+# 
+# Snorby Configuration Options Used
+# ./configure --enable-ipv6 --enable-zlib --enable-gre \
+# --enable-mpls --enable-targetbased --enable-decoder-preprocessor-rules \
+# --enable-ppm --enable-perfprofiling --enable-inline-init-failopen \
+# --enable-pthread --enable-ppm-test --enable-sourcefire \
+# --enable-active-response --enable-normalizer --enable-reload \
+# --enable-reload-error-restart --enable-paf --enable-react \
+# --enable-flexresp3 --enable-aruba --with-mysql
+#
+
 #
 # Unified2 Namespace
 # 
 module Unified2
-  
+
   #
   # Configuration File Types
   # 
@@ -111,74 +123,45 @@ module Unified2
   # @return [nil]
   # 
   def self.watch(path, position=:first, &block)
+    validate_path(path)
 
-    unless File.exists?(path)
-      raise FileNotFound, "Error - #{path} not found."
-    end
+    io = File.open(path)
 
-    if File.readable?(path)
-      io = File.open(path)
+    case position      
+    when Integer
+      io.sysseek(position, IO::SEEK_SET)
 
-      case position
-      when Integer, Fixnum
-
-        event_id = position.to_i.zero? ? 1 : position.to_i
-        @event = Event.new(event_id)
-
-      when Symbol, String
-
-        case position.to_sym
-        when :last
-
-          until io.eof?
-            event = Unified2::Constructor::Construct.read(io)
-            event_id = event.data.event_id if event
-          end
-
-          @event = Event.new(event_id + 1)
-
-          # set event_id to false to catch
-          # beginning loop and process
-          event_id = false
-
-        when :first
-          begin
-            
-            first_open = File.open(path)
-            first_event = Unified2::Constructor::Construct.read(first_open)
-            first_open.close
-            event_id = first_event.data.event_id
-            @event = Event.new(event_id)
-  
-          rescue EOFError
-            sleep 5
-            retry
-          end
-
-        end
+    when Symbol, String
+    
+      if position == :last
+        io.sysseek(0, IO::SEEK_END)
+      else
+        io.sysseek(0, IO::SEEK_SET)
       end
-
-      loop do
-        begin
-          event = Unified2::Constructor::Construct.read(io)
-
-          if event_id
-            if event.data.event_id.to_i > (event_id - 1)
-              check_event(event, block)
-            end
-          else
-            check_event(event, block)
-          end
-
-        rescue EOFError
-          sleep 5
-          retry
-        end
-      end
-
+   
     else
-      raise FileNotReadable, "Error - #{path} not readable."
+      io.sysseek(0, IO::SEEK_SET)
     end
+
+    @event = Event.new(0)
+
+    loop do
+      begin
+        event = Unified2::Constructor::Construct.read(io)
+        check_event(event, block)
+
+      rescue EOFError
+        sleep 5
+        retry
+      end
+    end
+
+  rescue RuntimeError
+    raise "incorrect file format or position seek error"
+  rescue Interrupt
+    puts io.pos
+  ensure
+    io.close
   end
   
   #
@@ -196,40 +179,49 @@ module Unified2
   # @return [nil]
   #
   def self.read(path, &block)
+    validate_path(path)
 
-    unless File.exists?(path)
-      raise FileNotFound, "Error - #{path} not found."
+    io = File.open(path)
+    @event = Event.new(0)
+
+    until io.eof?
+      event = Unified2::Constructor::Construct.read(io)
+      check_event(event, block)
     end
 
-    if File.readable?(path)
-      io = File.open(path)
-
-      first_open = File.open(path)
-      first_event = Unified2::Constructor::Construct.read(first_open)
-      first_open.close
-
-      @event = Event.new(first_event.data.event_id)
-
-      until io.eof?
-        event = Unified2::Constructor::Construct.read(io)
-        check_event(event, block)
-      end
-
-    else
-      raise FileNotReadable, "Error - #{path} not readable."
-    end
+  rescue Interrupt
+    puts io.pos
+  ensure
+    io.close
   end
 
   private
 
-    def self.check_event(event, block)
+  def self.validate_path(path)
+    unless File.exists?(path)
+      raise FileNotFound, "Error - #{path} not found."
+    end
+
+    unless File.readable?(path)
+      raise FileNotReadable, "Error - #{path} not readable."
+    end 
+  end
+
+  def self.check_event(event, block)
+
+    if event.data.respond_to?(:event_id)
       if @event.id == event.data.event_id
         @event.load(event)
       else
         block.call(@event)
+        @extra_data = false
         @event = Event.new(event.data.event_id)
         @event.load(event)
       end
+    else 
+      @event.load(event)
     end
+
+  end
 
 end

@@ -5,9 +5,11 @@ module Unified2
     # Unified2 Header
     #
     class RecordHeader < ::BinData::Record
+
       endian :big
 
       uint32 :u2type
+
       uint32 :u2length
       
     end # class RecordHeader

@@ -26,6 +26,15 @@ module Unified2
     end
 
     #
+    # to_string
+    #
+    # @return [String] Signature name
+    #
+    def to_s
+      @name
+    end
+
+    #
     # Blank?
     # 
     # @return [true, false] 
