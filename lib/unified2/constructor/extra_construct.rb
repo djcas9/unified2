@@ -1,11 +1,16 @@
 require 'unified2/constructor/extra_data'
 require 'unified2/constructor/extra_data_header'
 
+#
+# Unified2
+#
 module Unified2
+
   #
   # Unified2 Constructor Namespace
   #
   module Constructor
+
     #
     # Unified2 Construction
     #
@@ -21,11 +26,6 @@ module Unified2
       # Unified2 data types
       # 
       extra_data :data
-
-      #
-      # String padding
-      # 
-      #string :read_length => :padding_length
 
       #
       # Sometimes the data needs extra padding

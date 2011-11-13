@@ -1,16 +1,29 @@
 require 'hexdump'
 require 'unified2/protocol'
 
+#
+# Unified2
+#
 module Unified2
+
+
   #
   # Packet
   # 
   class Packet
 
+    #
+    # Build method defaults
+    #
     attr_reader :link_type, :event_id,
       :microsecond, :timestamp, :length,
       :raw, :event_timestamp
 
+    #
+    # Initialize packet Object
+    #
+    # @param [Hash] Packet Packet hash
+    #
     def initialize(packet)
       @raw = packet
       @link_type = packet[:linktype]
@@ -50,6 +63,11 @@ module Unified2
       @ip_header
     end
 
+    #
+    # Protocol
+    #
+    # @return [Protocol] packet protocol object
+    #
     def protocol
       @proto ||= Protocol.new(@protocol, @packet)
     end
@@ -159,6 +177,14 @@ module Unified2
       Hexdump.dump(packet, options)
     end
 
+    #
+    # Hexdump
+    #
+    # @see Packet#dump
+    #
+    # @example 
+    #   packet.hexdump(:width => 16)
+    #
     def hexdump(options={})
       hexdump = options[:output] ||= ""
       options[:width] ||= 30

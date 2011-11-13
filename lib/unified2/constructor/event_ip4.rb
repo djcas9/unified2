@@ -1,8 +1,12 @@
 require 'unified2/constructor/primitive/ipv4'
 
+#
+# Unified2
+#
 module Unified2
 
   module Constructor
+
     #
     # Event IP Version 4
     # 

@@ -1,4 +1,8 @@
+#
+# Unified2
+#
 module Unified2
+
   #
   # Extra
   #
@@ -67,12 +71,16 @@ module Unified2
       ]
     }
 
+    #
+    # Build methods defaults
+    #
     attr_reader :extra, :header, :type_id, 
       :data_type, :value, :length, :timestamp, :data
 
     #
     # Initialize Extra object
     # 
+    # @param [Hash] data Extra data hash
     # 
     def initialize(data)
       extra = data[:data]
@@ -97,10 +105,20 @@ module Unified2
       false
     end
 
+    #
+    # Description
+    #
+    # @return [String] Extra data description
+    #
     def description
       @type.last
     end
 
+    #
+    # Name
+    #
+    # @return [String] Extra data name
+    #
     def name
       @type.first
     end

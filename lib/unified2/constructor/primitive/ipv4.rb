@@ -1,14 +1,23 @@
+#
+# Unified2
+#
 module Unified2
 
+  #
+  # Constructor
+  #
   module Constructor
+
     #
     # Unified2 Primitive Namespace
     #
     module Primitive
+
       #
       # BinData Primitive IP4 Constructor
       #
       class IPV4 < ::BinData::Primitive
+
         array :octets, :type => :uint8, :initial_length => 4
         
         # IPV4#set

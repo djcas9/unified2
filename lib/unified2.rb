@@ -9,20 +9,8 @@ require 'unified2/event'
 require 'unified2/exceptions'
 require 'unified2/version'
 
-# Tested with Snort 2.9.1.2
-# 
-# Snorby Configuration Options Used
-# ./configure --enable-ipv6 --enable-zlib --enable-gre \
-# --enable-mpls --enable-targetbased --enable-decoder-preprocessor-rules \
-# --enable-ppm --enable-perfprofiling --enable-inline-init-failopen \
-# --enable-pthread --enable-ppm-test --enable-sourcefire \
-# --enable-active-response --enable-normalizer --enable-reload \
-# --enable-reload-error-restart --enable-paf --enable-react \
-# --enable-flexresp3 --enable-aruba --with-mysql
 #
-
-#
-# Unified2 Namespace
+# Unified2
 # 
 module Unified2
 
@@ -119,6 +107,7 @@ module Unified2
   # 
   # @raise [FileNotReadable] Path not readable
   # @raise [FileNotFound] File not found
+  # @raise [BinaryReadError] Invalid position or file
   # 
   # @return [nil]
   # 
@@ -160,7 +149,7 @@ module Unified2
   rescue RuntimeError
     raise(BinaryReadError, "incorrect file format or position seek error")
   rescue Interrupt
-    puts io.pos
+    io.pos
   ensure
     io.close
   end
@@ -194,7 +183,6 @@ module Unified2
     end
 
   rescue Interrupt
-    puts io.pos
   ensure
     io.close
   end

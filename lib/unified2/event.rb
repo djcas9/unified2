@@ -17,13 +17,32 @@ module Unified2
   # Event
   #
   class Event
-
+    
+    #
+    # Normal Event headers types
+    #
     EVENT_TYPES = [7, 72, 104, 105]
+
+    #
+    # Extra Data Event Header Types
+    #
     EXTRA = [ 110 ]
+
+    #
+    # Legacy Event Header Types
+    #
     LEGACY_EVENT_TYPES = [7, 72]
+
+    #
+    # Packet Event Header Types
+    #
     PACKET_TYPES = [2]
 
+    #
+    # Setup method defaults
+    #
     attr_accessor :id, :event, :packets, :extras
+
     #
     # Initialize event
     #
@@ -217,6 +236,10 @@ module Unified2
     #
     # Packets
     #
+    # @yield [Packet] Description
+    #
+    # @return [Array] Packet object array
+    #
     def packets
       return @packets unless block_given?
       @packets.each { |packet| yield packet }
@@ -232,7 +255,11 @@ module Unified2
     end
 
     #
+    # Extras
     #
+    # @yield [Extra] yield event extra objects
+    #
+    # @return [Array] Extra object array
     #
     def extras
       return @extras unless block_given?

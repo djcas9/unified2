@@ -14,4 +14,4 @@ dependencies:
 development_dependencies:
   ore-tasks: ~> 0.5
   rspec: ~> 2.4
-  yard: ~> 0.6.0
+  yard: ~> 0.7

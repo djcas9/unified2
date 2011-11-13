@@ -2,6 +2,7 @@
 # String monkeypatches
 #
 class String
+
   #
   # Blank?
   # 

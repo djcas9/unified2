@@ -1,24 +1,27 @@
-
 require 'unified2/constructor/event_ip4'
 require 'unified2/constructor/event_ip6'
-
 require 'unified2/constructor/extra_construct'
 require 'unified2/constructor/extra_data'
-
 require 'unified2/constructor/legacy_event_ip4'
 require 'unified2/constructor/legacy_event_ip6'
 require 'unified2/constructor/record_header'
 require 'unified2/constructor/packet'
 
+#
+# Unified2
+#
 module Unified2
+
   #
   # Unified2 Constructor Namespace
   #
   module Constructor
+
     #
     # Unified2 Construction
     #
     class Construct < ::BinData::Record
+
       #
       # Rename record_header to header
       # to simplify and cut down on verbosity
