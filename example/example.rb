@@ -19,24 +19,7 @@ end
 
 Unified2.watch('seeds/unified2-current.log', :first) do |event|
 
-  puts event.id
-
-  puts event.severity
-
-  puts event.classification.name
-
-  puts event.signature.name
-
-  event.extras.each do |extra|
-    puts extra.name
-    puts extra.value
-  end
-
-  event.packets.each do |packet|
-    puts packet.ip_header
-    puts packet.protocol.header
-    puts packet.hexdump(:header => false, :width => 40)
-  end
+  puts event
 
 end
 
