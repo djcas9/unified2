@@ -67,7 +67,7 @@ module Unified2
       ]
     }
 
-    attr_accessor :extra, :header, :type_id, 
+    attr_reader :extra, :header, :type_id, 
       :data_type, :value, :length, :timestamp, :data
 
     #

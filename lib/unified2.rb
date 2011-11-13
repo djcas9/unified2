@@ -129,7 +129,7 @@ module Unified2
 
     case position      
     when Integer
-      io.sysseek(position, IO::SEEK_SET)
+      io.sysseek(position, IO::SEEK_CUR)
 
     when Symbol, String
     
@@ -143,13 +143,14 @@ module Unified2
       io.sysseek(0, IO::SEEK_SET)
     end
 
+    # Start with a null event.
+    # This will always be ignored.
     @event = Event.new(0)
 
     loop do
       begin
         event = Unified2::Constructor::Construct.read(io)
         check_event(event, block)
-
       rescue EOFError
         sleep 5
         retry
@@ -182,6 +183,9 @@ module Unified2
     validate_path(path)
 
     io = File.open(path)
+    
+    # Start with a null event.
+    # This will always be ignored.
     @event = Event.new(0)
 
     until io.eof?
@@ -213,7 +217,7 @@ module Unified2
       if @event.id == event.data.event_id
         @event.load(event)
       else
-        block.call(@event)
+        block.call(@event) unless @event.id.zero?
         @extra_data = false
         @event = Event.new(event.data.event_id)
         @event.load(event)

@@ -9,7 +9,11 @@ require 'packetfu'
 require 'ipaddr'
 require 'json'
 
+#
+# Unified2
+#
 module Unified2
+
   #
   # Event
   #
@@ -325,25 +329,59 @@ module Unified2
     # @return [String] Event string object
     # 
     def to_s
-      data = %{
-        Sensor: #{sensor.id}
-        Event ID: #{id}
-        Timestamp: #{timestamp.strftime('%D %H:%M:%S')}
-        Severity: #{severity}
-        Protocol: #{protocol}
-        Source IP: #{source_ip}:#{source_port}
-        Destination IP: #{destination_ip}:#{destination_port}
-        Signature: #{signature.name}
-        Classification: #{classification.name}
-        Event Checksum: #{checksum}
-      }
-      unless payload.blank?
-        data += "Payload Checksum: #{payload.checksum}\n"
-        data += "Payload:\n"
-        payload.dump(:width => 30, :output => data)
+      data = "EVENT\n"
+      data += "\tevent id: #{id}\n"
+      data += "\tsensor id: #{sensor.id}\n"
+      data += "\ttimestamp: #{timestamp.strftime('%D %H:%M:%S')}\n"
+      data += "\tseverity: #{severity}\n"
+      data += "\tprotocol: #{protocol}\n"
+      data += "\tsource ip: #{source_ip} (#{source_port})\n"
+      data += "\tdestination ip: #{destination_ip} (#{destination_port})\n"
+      data += "\tsignature: #{signature.name}\n"
+      data += "\tclassification: #{classification.name}\n"
+      data += "\tchecksum: #{checksum}\n"
+
+      packet_count = 1
+      length = packets.count
+
+      packets.each do |packet|
+        data += "\n\tPACKET  (#{packet_count} of #{length})\n\n"
+
+        data += "\tsensor id: #{sensor.id}"
+        data += "\tevent id: #{id}"
+        data += "\tevent second: #{packet.event_timestamp.to_i}\n"
+        data += "\tpacket second: #{packet.timestamp.to_i}"
+        data += "\tpacket microsecond: #{packet.microsecond.to_i}\n"
+        data += "\tlinktype: #{packet.link_type}"
+        data += "\tpacket length: #{packet.length}\n"
+        data += "\tChecksum: #{packet.checksum}\n\n"
+
+        hexdump = packet.hexdump(:width => 16)
+        hexdump.each_line { |line| data += "\t" + line }
+
+        packet_count += 1
       end
 
-      data.gsub(/^\s+/, "")
+      extra_count = 1
+      length = extras.count
+
+      extras.each do |extra|
+        data += "\n\tEXTRA   (#{extra_count} of #{length})\n\n"
+
+        data += "\tname: #{extra.name}"
+        data += "\tevent type: #{extra.header[:event_type]}"
+        data += "\tevent length: #{extra.header[:event_length]}\n"
+        data += "\tsensor id: #{sensor.id}"
+        data += "\tevent id: #{id}"
+        data += "\tevent second: #{extra.timestamp}\n"
+        data += "\ttype: #{extra.type_id}"
+        data += "\tdata type: #{extra.data_type}"
+        data += "\tlength: #{extra.length}\n"
+        data += "\tvalue: " + extra.value + "\n"
+
+      end
+
+      data += "\n"
     end
 
     private

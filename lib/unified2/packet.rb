@@ -8,12 +8,19 @@ module Unified2
   # 
   class Packet
 
+    attr_reader :link_type, :event_id,
+      :microsecond, :timestamp, :length,
+      :raw, :event_timestamp
+
     def initialize(packet)
       @raw = packet
       @link_type = packet[:linktype]
       @microsecond = packet[:packet_microsecond]
+
+      @event_timestamp = Time.at(packet[:timestamp])
       @timestamp = Time.at(packet[:packet_timestamp])
-      @length = packet[:length]
+      @length = packet[:packet_length].to_i
+      @event_id = packet[:event_id]
 
       @packet ||= PacketFu::Packet.parse(packet[:packet])
       @protocol = @packet.protocol.last.to_sym
