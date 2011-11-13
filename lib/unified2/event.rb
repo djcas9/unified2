@@ -455,15 +455,15 @@ module Unified2
         event_hash
       end
 
-      def build_packet_data(event)
+      def build_packet_data(packet)
         packet_hash = {}
         packet_hash = {
-          :linktype => event.data.linktype,
-          :packet_microsecond => event.data.packet_microsecond,
-          :packet_timestamp => event.data.packet_second,
-          :packet => event.data.packet_data,
-          :timestamp => event.data.event_second,
-          :packet_length => event.data.packet_length
+          :linktype => packet.data.linktype,
+          :packet_microsecond => packet.data.packet_microsecond,
+          :packet_timestamp => packet.data.packet_second,
+          :packet => packet.data.packet_data,
+          :timestamp => packet.data.event_second,
+          :packet_length => packet.data.packet_length
         }
 
         packet_hash
