@@ -20,6 +20,6 @@ Unified2.configuration do
 
 end
 
-Unified2.watch('/var/log/snort/merged.log', :first) do |event|
-  puts event
+Unified2.watch('seeds/unified2-current.log', :first) do |event|
+  puts event.id if event.id % 100
 end

@@ -158,7 +158,7 @@ module Unified2
     end
 
   rescue RuntimeError
-    raise "incorrect file format or position seek error"
+    raise(BinaryReadError, "incorrect file format or position seek error")
   rescue Interrupt
     puts io.pos
   ensure

@@ -477,7 +477,7 @@ module Unified2
       def build_signature
         signature = {}
 
-        if Unified2.signatures.data
+        if Unified2.signatures
           key = event.data.signature_id.to_s
 
           if Unified2.signatures.data.has_key?(key)
@@ -509,7 +509,7 @@ module Unified2
       def build_classifications
         classification = {}
 
-        if Unified2.classifications.data
+        if Unified2.classifications
           key = "#{event.data.classification_id}"
 
           if Unified2.classifications.data.has_key?(key)
