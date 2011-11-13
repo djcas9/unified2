@@ -1,3 +1,13 @@
+=== 0.6.0 / 2011-11-13
+
+* update deps
+* added support for unified2 extra data
+* refactor Unified2#read & Unified2#watch
+* Interrupt now returns file position
+* updated spec for legacy u2 and current format changes
+* events can now have multiple packets
+* bug fixes and documentation
+
 === 0.5.4 / 2011-06-27
 
 * update packetfu ~> 1.1

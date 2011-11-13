@@ -68,7 +68,6 @@ end
 
 unless path
   STDERR.puts "You must supply a unified2 log file."
-  STDERR.puts "ru2 [PATH]"
   exit 1
 end
 
