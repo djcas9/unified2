@@ -1,4 +1,5 @@
-$:.unshift File.join(File.dirname(__FILE__), "..", "lib")
+$:<< '../lib' << 'lib'
+
 require 'unified2'
 
 # Unified2 Configuration
