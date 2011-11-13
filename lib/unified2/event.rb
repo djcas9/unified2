@@ -1,13 +1,12 @@
-require 'unified2/extra'
-require 'unified2/classification'
-require 'unified2/packet'
-require 'unified2/payload'
-require 'unified2/sensor'
-require 'unified2/signature'
-
 require 'packetfu'
 require 'ipaddr'
 require 'json'
+
+require 'unified2/extra'
+require 'unified2/classification'
+require 'unified2/packet'
+require 'unified2/sensor'
+require 'unified2/signature'
 
 #
 # Unified2
@@ -354,7 +353,7 @@ module Unified2
         data += "\tpacket microsecond: #{packet.microsecond.to_i}\n"
         data += "\tlinktype: #{packet.link_type}"
         data += "\tpacket length: #{packet.length}\n"
-        data += "\tChecksum: #{packet.checksum}\n\n"
+        data += "\tchecksum: #{packet.checksum}\n\n"
 
         hexdump = packet.hexdump(:width => 16)
         hexdump.each_line { |line| data += "\t" + line }
@@ -379,6 +378,7 @@ module Unified2
         data += "\tlength: #{extra.length}\n"
         data += "\tvalue: " + extra.value + "\n"
 
+        extra_count += 1
       end
 
       data += "\n"

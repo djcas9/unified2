@@ -1,4 +1,4 @@
-$:.unshift File.join(File.dirname(__FILE__), "..", "lib")
+$:<< '../lib' << 'lib'
 require 'unified2'
 
 # Unified2 Configuration
@@ -11,11 +11,11 @@ Unified2.configuration do
   # Load signatures, generate events will be sent over the web socket
   # quickly so we slow down the process of
   # pushing events onto the channel.rs & classifications into memory
-  load :signatures, '/Users/mephux/.snort-2.9.1.2/etc/sid-msg.map'
+  load :signatures, 'seeds/sid-msg.map'
 
-  load :generators, '/Users/mephux/.snort-2.9.1.2/etc/gen-msg.map'
+  load :generators, 'seeds/gen-msg.map'
   
-  load :classifications, '/Users/mephux/.snort-2.9.1.2/etc/classification.config'
+  load :classifications, 'seeds/classification.config'
 
 end
 
@@ -66,5 +66,3 @@ Unified2.watch(path, :first) do |event|
 
   #exit 1 if event.protocol.tcp?
 end
-
-

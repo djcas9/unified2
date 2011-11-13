@@ -1,5 +1,4 @@
 require 'hexdump'
-require 'unified2/payload'
 require 'unified2/protocol'
 
 module Unified2

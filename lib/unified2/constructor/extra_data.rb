@@ -14,7 +14,7 @@ module Unified2
       
       uint32 :event_second
       
-      uint32 :type
+      uint32 :extra_type
       
       uint32 :data_type
       

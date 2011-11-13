@@ -82,7 +82,7 @@ module Unified2
       @timestamp = Time.at(@data[:event_second].to_i)
       @value = @data[:blob].to_s
       @length = @data[:blob_length].to_i
-      @type_id = @data[:type].to_i
+      @type_id = @data[:extra_type].to_i
       @data_type = @data[:data_type].to_i
       @type = EXTRA_TYPES[@type_id.to_i]
     end

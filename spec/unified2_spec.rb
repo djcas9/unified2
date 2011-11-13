@@ -12,7 +12,7 @@ describe Unified2 do
   end
   
   it "should have the correct signature size" do
-    Unified2.signatures.size.should == 16711
+    Unified2.signatures.size.should == 19243
   end
   
   it "should have the correct signature name" do
@@ -48,7 +48,7 @@ describe Unified2 do
   end
   
   it "should have the correct generator size" do
-    Unified2.generators.size.should == 388
+    Unified2.generators.size.should == 461
   end
   
   it "should have the correct generator id" do

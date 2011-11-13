@@ -8,63 +8,34 @@ Unified2.configuration do
   sensor :interface => 'en1',
     :name => 'Unified2 Example', :id => 3
 
-  # Load signatures, generate events will be sent over the web socket
-  # quickly so we slow down the process of
-  # pushing events onto the channel.rs & classifications into memory
-  load :signatures, '/Users/mephux/.snort-2.9.1.2/etc/sid-msg.map'
+  load :signatures, 'seeds/sid-msg.map'
 
-  load :generators, '/Users/mephux/.snort-2.9.1.2/etc/gen-msg.map'
+  load :generators, 'seeds/gen-msg.map'
   
-  load :classifications, '/Users/mephux/.snort-2.9.1.2/etc/classification.config'
+  load :classifications, 'seeds/classification.config'
 
 end
 
-#path = 'seeds/unified2.log'
-path = '/var/log/snort/merged.log'
+Unified2.watch('seeds/unified2-current.log', :first) do |event|
 
-Unified2.watch(path, :first) do |event|
-  #next if event.signature.blank?
-  #next unless event.packets.count >= 3
+  puts event.id
 
-  #next if event.extras.empty?
+  puts event.severity
 
-  #next unless event.classification.name == "Potentially Bad Traffic"
+  puts event.classification.name
 
-  #next unless event.packets.map(&:checksum).include?('2ee50451de0fb4136e0e66d4f9ebdf49')
+  puts event.signature.name
 
-  puts event
-
-  #event.extras.each do |extra|
-    #puts extra.name + " == " + extra.value
-    #puts "\n\n"
-  #end
-
-  #exit 1
-
-  #p event.packets.count
-
-  event.packets.each do |packet|
-    #p packet.ip_header
-    #puts packet.protocol.header
-    #puts packet.test
-    #puts packet
-    #puts packet.hex
-    #puts packet.checksum
-    #puts packet.hexdump(:header => false, :width => 40)
+  event.extras.each do |extra|
+    puts extra.name
+    puts extra.value
   end
 
-  # exit 1
-  #puts event.packets.length
+  event.packets.each do |packet|
+    puts packet.ip_header
+    puts packet.protocol.header
+    puts packet.hexdump(:header => false, :width => 40)
+  end
 
-  #puts event.signature
-  #puts event.classification.name
-  #puts event.severity
-  #puts event.protocol.to_h
-
-  #puts event.source_ip
-
-
-  #exit 1 if event.protocol.tcp?
 end
-
 
