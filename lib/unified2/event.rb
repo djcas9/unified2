@@ -469,7 +469,7 @@ module Unified2
         packet_hash
       end
 
-      def build_generator(event)
+      def build_generator
         signature = {}
 
         if Unified2.generators.data
