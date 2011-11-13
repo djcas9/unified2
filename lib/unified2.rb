@@ -149,9 +149,9 @@ module Unified2
   rescue RuntimeError
     raise(BinaryReadError, "incorrect file format or position seek error")
   rescue Interrupt
-    io.pos
+    io.pos if io
   ensure
-    io.close
+    io.close if io
   end
   
   #
@@ -184,7 +184,7 @@ module Unified2
 
   rescue Interrupt
   ensure
-    io.close
+    io.close if io
   end
 
   private
