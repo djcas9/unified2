@@ -472,7 +472,7 @@ module Unified2
       def build_generator
         signature = {}
 
-        if Unified2.generators.data
+        if Unified2.generators
           key = "#{@event.data.generator_id}.#{@event.data.signature_id}"
 
           if Unified2.generators.data.has_key?(key)
