@@ -65,6 +65,11 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
  * hexdump: ~> 0.2.x
  * packetfu: ~> 1.1.x
 
+## TODO
+
+ * Make both Event#watch and Event#read evented
+ * User eventmachine to monitor the file i.e modify/delete/move/symlink
+
 ## Install
 
 	`$ gem install unified2`
