@@ -4,15 +4,15 @@ require 'unified2'
 describe Event do
 
   before(:all) do
-    @event = Unified2.first('example/seeds/unified2.log')
+    @event = Unified2.first('example/seeds/unified2-current.log')
   end
 
   it "should have an event_id" do
-    @event.to_i.should == 1
+    @event.id.should == 1
   end
 
   it "should have an event time" do
-    @event.timestamp.to_s.should == '2010-10-05 22:50:18 -0400'
+    @event.timestamp.to_s.should == '2011-11-12 16:04:25 -0500'
   end
 
   it "should have a sensor id" do
@@ -32,35 +32,35 @@ describe Event do
   end
 
   it "should have a source address" do
-    @event.source_ip.should == "24.19.7.110"
+    @event.source_ip.should == "10.0.1.6"
   end
 
   it "should have a source port" do
-    @event.source_port.should == 3
+    @event.source_port.should == 52378
   end
 
   it "should have a destination address" do
-    @event.destination_ip.should == "10.0.1.6"
+    @event.destination_ip.should == "199.47.216.149"
   end
 
   it "should have a destination port" do
-    @event.destination_port.should == 13
+    @event.destination_port.should == 80
   end
   
   it "should have a protocol" do
-    @event.protocol.to_s.should == 'ICMP'
+    @event.protocol.to_s.should == 'TCP'
   end
   
   it "should have a severity" do
-    @event.severity.should == 3
+    @event.severity.should == 1
   end
 
   it "should have an event checksum" do
-    @event.checksum.should == "6e96db6e8fe649c939711400ea4625eb"
+    @event.checksum.should == "01af8a5245fce250989b00990406fa63"
   end
 
   it "should have a signature id" do
-    @event.signature.id.should == 485
+    @event.signature.id.should == 18608
   end
 
   it "should have a signature generator id" do
@@ -68,7 +68,7 @@ describe Event do
   end
 
   it "should have a signature revision" do
-    @event.signature.revision.should == 5
+    @event.signature.revision.should == 3
   end
 
   it "should have a signature thats not blank" do
@@ -76,37 +76,50 @@ describe Event do
   end
 
   it "should have a signature name" do
-    @event.signature.name.should == "DELETED ICMP Destination Unreachable" \
-      " Communication Administratively Prohibited"
+    @event.signature.name.should == "POLICY Dropbox desktop software in use"
   end
 
   it "should have a classification id" do
-    @event.classification.id.should == 29
+    @event.classification.id.should == 33
   end
 
   it "should have a classification short name" do
-    @event.classification.short.should == "misc-activity"
+    @event.classification.short.should == "policy-violation"
   end
 
   it "should have a classification severity" do
-    @event.classification.severity.should == 3
+    @event.classification.severity.should == 1
   end
 
   it "should have a classification name" do
-    @event.classification.name.should == "Misc activity"
+    @event.classification.name.should == "Potential Corporate Privacy Violation"
+  end
+
+  it "should have zero packets associated with this event" do
+    @event.packets.count.should == 0
+  end
+
+  it "event extras count should equal 2" do
+    @event.extras.count.should == 2
+  end
+
+  it "should have extra data thats not blank" do
+    @event.extras.first.blank?.should == false
   end
   
-  it "should have a payload thats not blank" do
-    @event.payload.blank?.should == false
+  it "extra data should have the correct value" do
+    @event.extras.first.value.should == "/subscribe?host_int=26273724&ns_map=2895792_52721831662858160,15287777_4310255073,2027874_776915740822270306,2816020_68722292756,564088_4146784271384222584,555213_5414107641578813645&ts=1321131865"
+    @event.extras.last.value.should == "notify9.dropbox.com"
   end
-  
-  it "should have a hex payload" do
-    p = "000000004520008323bc000032113a080a0001061813076e90c84fac006fe498"
-    @event.payload.hex.should == p
+
+  it "extra data should have a value length" do
+    @event.extras.first.length.should == 204
   end
-  
-  it "should have a payload length" do
-    @event.payload.length.should == 70
+
+  it "extra data should have a header" do
+    @event.extras.first.header[:event_type].should == 4
+    @event.extras.first.header[:event_length].should == 228
   end
 
 end
+

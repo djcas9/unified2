@@ -72,7 +72,7 @@ module Unified2
       @packet.payload
     end
 
-   #
+    #
     # Blank?
     #
     # @return [true, false] Check is payload is blank

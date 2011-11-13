@@ -1,4 +1,4 @@
-# unified2
+# Unified2
 
 * [Homepage](http://github.com/mephux/unified2)
 * [Issues](http://github.com/mephux/unified2/issues)
@@ -12,47 +12,51 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
 ## Features
 
  * Monitor/Read unified2 logs & manipulate the data.
- * Numerous connivence methods
+ * Numerous convenience methods
  * Simple & Intuitive to Use
+ * Supports legacy unified2 formats and the most current as of snort 2.9.1.3
+ * Packet data, headers, hexdumps and more.
 
 ## Examples
 
 ``` ruby
 require 'unified2'
 
-#
-# Load rules into memory
-#
-
+# Unified2 Configuration
 Unified2.configuration do
- # Sensor Configurations
- sensor :id => 1, :name => 'Test Sensor', :interface => 'en1'
 
- # Load signatures, generators & classifications into memory
- load :signatures, 'sid-msg.map'
- load :generators, 'gen-msg.map'
- load :classifications, 'classification.config'
+  # Sensor Configurations
+  sensor :interface => 'en1',
+    :name => 'Unified2 Example', :id => 3
+
+  load :signatures, 'seeds/sid-msg.map'
+
+  load :generators, 'seeds/gen-msg.map'
+  
+  load :classifications, 'seeds/classification.config'
+
 end
 
-#
-# Unified2#watch
-#
-# Watch a unified2 file for changes and process the results.
-# 
+Unified2.watch('seeds/unified2-current.log', :first) do |event|
 
-Unified2.watch('/var/log/snort/merged.log', :last) do |event|
- next if event.signature.name.blank?
- puts event	
-end
+  puts event.id
 
-# Unified2#read
-# Parse a unified2 file and process the results.
+  puts event.severity
 
-Unified2.read('/var/log/snort/merged.log') do |event|
+  puts event.classification.name
 
- puts event.protocol #=> "TCP"
+  puts event.signature.name
 
- puts event.protocol.to_h #=> {:length=>379, :seq=>3934511163, :ack=>1584708129 ... }
+  event.extras.each do |extra|
+    puts extra.name
+    puts extra.value
+  end
+
+  event.packets.each do |packet|
+    puts packet.ip_header
+    puts packet.protocol.header
+    puts packet.hexdump(:header => false, :width => 40)
+  end
 
 end
 ```

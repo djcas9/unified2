@@ -7,31 +7,20 @@ include Unified2
 module Unified2
   
   def self.first(path)
-    unless File.exists?(path)
-      raise FileNotFound, "Error - #{path} not found."
-    end
+    validate_path(path)
 
-    if File.readable?(path)
-      io = File.open(path)
+    io = File.open(path)
+    io.sysseek(0, IO::SEEK_SET)
 
-      first_open = File.open(path)
-      first_event = Unified2::Constructor::Construct.read(first_open)
-      first_open.close
+    @event = Event.new(1)
 
-      @event = Event.new(first_event.data.event_id)
-
-      loop do
-        event = Unified2::Constructor::Construct.read(io)
-
-        if event.data.event_id.to_i == @event.id.to_i
-          @event.load(event)
-        else
-          return @event
-        end
+    loop do
+      event = Unified2::Constructor::Construct.read(io)
+      if event.data.respond_to?(:event_id)
+        return @event if event.data.event_id != @event.id
       end
 
-    else
-      raise FileNotReadable, "Error - #{path} not readable."
+      @event.load(event)
     end
   end
   

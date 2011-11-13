@@ -87,6 +87,16 @@ module Unified2
       @type = EXTRA_TYPES[@type_id.to_i]
     end
 
+    #
+    # Blank?
+    #
+    # @return [true, false] Check is extra value is blank
+    #
+    def blank?
+      return true unless @value
+      false
+    end
+
     def description
       @type.last
     end
