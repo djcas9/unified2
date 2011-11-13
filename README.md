@@ -19,7 +19,7 @@ A ruby interface for unified2 output. rUnified2 allows you to manipulate unified
 
 ## Examples
 
-require 'unified2'
+    require 'unified2'
 
     # Unified2 Configuration
     Unified2.configuration do
