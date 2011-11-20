@@ -35,6 +35,16 @@ module Unified2
       @name
     end
 
+    def to_h
+      to_hash = {
+        :name => name,
+        :hostname => hostname,
+        :checksum => checksum,
+        :id => id,
+        :interface => interface
+      }
+    end
+
     #
     # Update
     # 

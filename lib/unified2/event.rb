@@ -313,6 +313,7 @@ module Unified2
       @event_data[:protocol] = protocol
       @event_data[:timestamp] = timestamp.to_s
       @event_data[:checksum] = checksum
+      @event_data[:sensor] = sensor.to_h
 
       @to_hash = {
         :event => @event_data,
