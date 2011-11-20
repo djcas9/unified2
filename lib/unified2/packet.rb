@@ -170,7 +170,7 @@ module Unified2
         :checksum => checksum,
         :payload => payload,
         :link_type => link_type,
-        :protocol => protocol.to_h
+        :protocol => protocol.to_h,
         :ip_header => ip_header
       }
     end
