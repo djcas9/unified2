@@ -67,11 +67,15 @@ module Unified2
     #   event.protocol.to_h #=> {:length=>379, :seq=>3934511163, :ack=>1584708129 ... }
     # 
     def to_h
+      hash = {
+        :type => @protocol.to_s
+      }
+
       if send(:"#{@protocol.downcase}?")
-        self.send(:"#{@protocol.downcase}")
-      else
-        {}
+        hash.merge!(self.send(:"#{@protocol.downcase}"))
       end
+
+      hash
     end
     alias header to_h
 

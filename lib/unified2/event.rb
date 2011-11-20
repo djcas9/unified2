@@ -310,25 +310,24 @@ module Unified2
     # @return [Hash] Event hash object
     # 
     def to_h
-      @to_hash = {}
-      
-      @event_data[:extras] = @extras
-      @event_data[:packets] = @packets
+      @event_data[:protocol] = protocol
+      @event_data[:checksum] = checksum
 
-      #unless payload.blank?
-        #hexdump = ''
-        #payload.dump(:width => 30, :output => hexdump)
-        #@packet_data[:packet] = hexdump
-      #end
+      @to_hash = {
+        :event => @event_data,
+        :packets => [],
+        :extras => []
+      }
 
-      #.encode('utf-8', 'iso-8859-1')
-      
-      #[@event_data, @packet_data].each do |hash|
-        #@to_hash.merge!(hash) if hash.is_a?(Hash)
-      #end
-      
-      #@to_hash
-      @event_data
+      extras.each do |extra|
+        @to_hash[:extras].push(extra.to_h)
+      end
+
+      packets.each do |packet|
+        @to_hash[:packets].push(packet.to_h)
+      end
+
+      @to_hash
     end
 
     #

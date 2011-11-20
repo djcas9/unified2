@@ -1,3 +1,8 @@
+=== 0.6.1 / 2011/11/20
+
+* Add to_h method for core classes
+* Add to_pacp/to_file method for packet class
+
 === 0.6.0 / 2011-11-13
 
 * update deps

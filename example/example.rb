@@ -17,7 +17,10 @@ Unified2.configuration do
 
 end
 
-Unified2.watch('seeds/unified2-current.log', :first) do |event|
+#path = 'seeds/unified2-current.log'
+path = '/var/log/snort/merged.log'
+
+Unified2.watch(path, :last) do |event|
 
   puts event
 

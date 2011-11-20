@@ -6,7 +6,6 @@ require 'unified2/protocol'
 #
 module Unified2
 
-
   #
   # Packet
   # 
@@ -17,7 +16,7 @@ module Unified2
     #
     attr_reader :link_type, :event_id,
       :microsecond, :timestamp, :length,
-      :raw, :event_timestamp
+      :raw, :event_timestamp, :packet
 
     #
     # Initialize packet Object
@@ -45,7 +44,7 @@ module Unified2
     #
     def ip_header
       if @packet.is_ip?
-        @ip_header = {
+        ip_header = {
           :ip_ver => @packet.ip_header.ip_v,
           :ip_hlen => @packet.ip_header.ip_hl,
           :ip_tos => @packet.ip_header.ip_tos,
@@ -57,10 +56,48 @@ module Unified2
           :ip_csum => @packet.ip_header.ip_sum
         }
       else
-        @ip_header = {}
+        ip_header = {}
       end
 
-      @ip_header
+      ip_header
+    end
+
+    #
+    # Valid
+    #
+    # @return [true,false] Is this a valid packet
+    #
+    def valid?
+      !@packet.is_invalid?
+    end
+
+    #
+    # Ehternet
+    #
+    # @return [true,false] Ethernet packet
+    #
+    def eth?
+      @packet.is_eth?
+    end
+    alias ethernet? eth?
+
+    #
+    # IP Version 4
+    #
+    # @return [true,false]
+    #
+    def ipv4?
+      @packet.is_ip?
+    end
+    alias ip? ipv4?
+
+    #
+    # IP Version 6
+    #
+    # @return [true,false]
+    #
+    def ipv6?
+      @packet.is_ipv6?
     end
 
     #
@@ -79,6 +116,20 @@ module Unified2
     #
     def to_s
       payload.to_s
+    end
+
+    #
+    # Convert to libpcap format
+    #
+    def to_pcap
+      @packet.to_pcap
+    end
+
+    #
+    # Output to file
+    #
+    def to_file(filename, mode)
+      @packet.to_f(filename, mode)
     end
 
     #
@@ -107,6 +158,21 @@ module Unified2
     #
     def raw
       @packet
+    end
+
+    def to_h
+      @to_hash = {
+        :timestamp => timestamp,
+        :length => length,
+        :microsecond => microsecond,
+        :hex => hex,
+        :hexdump => hexdump,
+        :checksum => checksum,
+        :payload => payload,
+        :link_type => link_type,
+        :protocol => protocol.to_h
+        :ip_header => ip_header
+      }
     end
 
     #

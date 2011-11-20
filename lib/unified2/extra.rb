@@ -123,6 +123,19 @@ module Unified2
       @type.first
     end
 
+    def to_h
+     to_h = {
+      :value => value,
+      :header => header,
+      :length => length,
+      :name => name,
+      :description => description,
+      :timestamp => timestamp,
+      :type_id => type_id,
+      :data_type => data_type
+     }
+    end
+
   end
 end
 
