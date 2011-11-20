@@ -126,7 +126,10 @@ module Unified2
     def to_h
      to_h = {
       :value => value,
-      :header => header,
+      :header => {
+        :type => header[:event_type],
+        :length => header[:event_length],
+      },
       :length => length,
       :name => name,
       :description => description,
