@@ -311,6 +311,7 @@ module Unified2
     # 
     def to_h
       @event_data[:protocol] = protocol
+      @event_data[:timestamp] = timestamp.to_s
       @event_data[:checksum] = checksum
 
       @to_hash = {

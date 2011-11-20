@@ -133,7 +133,7 @@ module Unified2
       :length => length,
       :name => name,
       :description => description,
-      :timestamp => timestamp,
+      :timestamp => timestamp.to_s,
       :type_id => type_id,
       :data_type => data_type
      }
