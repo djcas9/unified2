@@ -138,8 +138,9 @@ module Unified2
 
     loop do
       begin
+        position = io.pos
         event = Unified2::Constructor::Construct.read(io)
-        check_event(event, io.pos, block)
+        check_event(event, position, block)
       rescue EOFError
         sleep 5
         retry
@@ -178,8 +179,9 @@ module Unified2
     @event = Event.new(0, 0)
 
     until io.eof?
+      position = io.pos
       event = Unified2::Constructor::Construct.read(io)
-      check_event(event, io.pos, block)
+      check_event(event, position, block)
     end
 
   rescue Interrupt
