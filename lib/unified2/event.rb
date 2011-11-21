@@ -312,6 +312,7 @@ module Unified2
     # 
     def to_h
       @event_data[:position] = position
+      @event_data[:length] = 
       @event_data[:protocol] = protocol
       @event_data[:timestamp] = timestamp.to_s
       @event_data[:checksum] = checksum
@@ -420,6 +421,10 @@ module Unified2
         event_hash = {}
 
         event_hash = {
+          :header => {
+            :type => @event.header.u2type,
+            :length => @event.header.u2length
+          },
           :destination_ip => @event.data.ip_destination,
           :priority_id => @event.data.priority_id,
           :signature_revision => @event.data.signature_revision,
