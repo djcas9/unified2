@@ -207,6 +207,7 @@ module Unified2
       if @event.id == event.data.event_id
         @event.load(event)
       else
+        @event.next_position = position
         block.call(@event) unless @event.id.zero?
         @event = Event.new(event.data.event_id, position.to_i)
         @event.load(event)

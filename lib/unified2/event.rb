@@ -41,7 +41,8 @@ module Unified2
     #
     # Setup method defaults
     #
-    attr_accessor :id, :event, :packets, :extras, :position
+    attr_accessor :id, :event, :packets, :extras, :position,
+      :next_position
 
     #
     # Initialize event
@@ -53,6 +54,15 @@ module Unified2
       @position = position
       @packets = []
       @extras = []
+    end
+
+    #
+    # Event length
+    #
+    # @return [Integer] Event length
+    #
+    def length
+      @event_data[:header][:length].to_i
     end
 
     #
@@ -312,7 +322,8 @@ module Unified2
     # 
     def to_h
       @event_data[:position] = position
-      @event_data[:length] = 
+      @event_data[:next_position] = next_position.to_i
+
       @event_data[:protocol] = protocol
       @event_data[:timestamp] = timestamp.to_s
       @event_data[:checksum] = checksum
@@ -325,10 +336,12 @@ module Unified2
       }
 
       extras.each do |extra|
+        next_position += extra.length.to_i
         @to_hash[:extras].push(extra.to_h)
       end
 
       packets.each do |packet|
+        next_position += packet.length.to_i
         @to_hash[:packets].push(packet.to_h)
       end
 
