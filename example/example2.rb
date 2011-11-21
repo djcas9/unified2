@@ -23,7 +23,7 @@ end
 Unified2.watch('seeds/unified2-current.log', :first) do |event|
   
   puts event.id
-
+  
   puts event.position
 
   puts event.severity
