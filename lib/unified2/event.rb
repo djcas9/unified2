@@ -336,12 +336,10 @@ module Unified2
       }
 
       extras.each do |extra|
-        next_position += extra.length.to_i
         @to_hash[:extras].push(extra.to_h)
       end
 
       packets.each do |packet|
-        next_position += packet.length.to_i
         @to_hash[:packets].push(packet.to_h)
       end
 
