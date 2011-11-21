@@ -12,7 +12,7 @@ module Unified2
     io = File.open(path)
     io.sysseek(0, IO::SEEK_SET)
 
-    @event = Event.new(1)
+    @event = Event.new(1, 0)
 
     loop do
       event = Unified2::Constructor::Construct.read(io)

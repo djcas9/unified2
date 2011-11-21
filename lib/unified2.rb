@@ -134,12 +134,12 @@ module Unified2
 
     # Start with a null event.
     # This will always be ignored.
-    @event = Event.new(0)
+    @event = Event.new(0, 0)
 
     loop do
       begin
         event = Unified2::Constructor::Construct.read(io)
-        check_event(event, block)
+        check_event(event, io.pos, block)
       rescue EOFError
         sleep 5
         retry
@@ -175,11 +175,11 @@ module Unified2
     
     # Start with a null event.
     # This will always be ignored.
-    @event = Event.new(0)
+    @event = Event.new(0, 0)
 
     until io.eof?
       event = Unified2::Constructor::Construct.read(io)
-      check_event(event, block)
+      check_event(event, io.pos, block)
     end
 
   rescue Interrupt
@@ -199,15 +199,14 @@ module Unified2
     end 
   end
 
-  def self.check_event(event, block)
-
+  def self.check_event(event, position=0, block)
+    
     if event.data.respond_to?(:event_id)
       if @event.id == event.data.event_id
         @event.load(event)
       else
         block.call(@event) unless @event.id.zero?
-        @extra_data = false
-        @event = Event.new(event.data.event_id)
+        @event = Event.new(event.data.event_id, position.to_i)
         @event.load(event)
       end
     else 

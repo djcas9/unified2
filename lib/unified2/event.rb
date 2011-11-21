@@ -41,15 +41,16 @@ module Unified2
     #
     # Setup method defaults
     #
-    attr_accessor :id, :event, :packets, :extras
+    attr_accessor :id, :event, :packets, :extras, :position
 
     #
     # Initialize event
     #
     # @param [Integer] id Event id
     #
-    def initialize(id)
+    def initialize(id, position)
       @id = id.to_i
+      @position = position
       @packets = []
       @extras = []
     end
@@ -310,6 +311,7 @@ module Unified2
     # @return [Hash] Event hash object
     # 
     def to_h
+      @event_data[:position] = position
       @event_data[:protocol] = protocol
       @event_data[:timestamp] = timestamp.to_s
       @event_data[:checksum] = checksum
