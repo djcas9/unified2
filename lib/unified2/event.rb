@@ -330,7 +330,17 @@ module Unified2
       @event_data[:sensor] = sensor.to_h
 
       @to_hash = {
-        :event => @event_data,
+        :event => {
+          :header => header,
+          :id => event_id,
+          :severity_id => priority_id,
+          :sensor => sensor.to_h,
+          :checksum => checksum,
+          :timestamp => timestamp.to_s,
+          :protocol => protocol,
+          :next_position => next_position.to_i,
+          :position => position
+        },
         :packets => [],
         :extras => []
       }
