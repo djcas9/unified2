@@ -333,6 +333,8 @@ module Unified2
         :header => header,
         :id => id,
         :severity_id => severity,
+        :signature => signature.to_h,
+        :classification => classification.to_h,
         :sensor => sensor.to_h,
         :checksum => checksum,
         :timestamp => timestamp.to_s,

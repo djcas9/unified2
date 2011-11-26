@@ -28,6 +28,16 @@ module Unified2
       @blank = signature[:blank] || false
     end
 
+    def to_h
+      hash = {
+        :id => id,
+        :generator_id => generator,
+        :revision => revision,
+        :name => name,
+        :blank => blank
+      }
+    end
+
     #
     # to_string
     #

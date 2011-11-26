@@ -25,6 +25,17 @@ module Unified2
       @short = classification[:short]
       @severity = classification[:severity]
     end
+    
+    #
+    # Convert To Hash
+    #
+    def to_h
+      hash = {
+        :id => id,
+        :name => name,
+        :short_name => short
+      } 
+    end
 
     #
     # String

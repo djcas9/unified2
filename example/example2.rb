@@ -20,32 +20,12 @@ Unified2.configuration do
 
 end
 
-#path = 'seeds/unified2-current.log'
-path = "/var/log/snort/merged.log"
+path = 'seeds/unified2-current.log'
+#path = "/var/log/snort/merged.log"
 
-Unified2.watch(path, 1071163) do |event|
-  next unless event.id == 2908
-  puts event.id
-  
-  puts event.position
+Unified2.watch(path, :first) do |event|
 
-  puts event.severity
-
-  puts event.classification.name
-
-  puts event.signature.name
-
-  event.extras.each do |extra|
-    puts extra.name
-    puts extra.value
-  end
-
-  event.packets.each do |packet|
-    puts packet.ip_header
-    puts packet.protocol.header
-    puts packet.hexdump(:header => false, :width => 40)
-  end
-
- exit 1
+  puts event.to_h
+  puts "\n\n"
 
 end
