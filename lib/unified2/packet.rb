@@ -167,9 +167,9 @@ module Unified2
         :length => length,
         :microsecond => microsecond,
         :hex => hex,
-        :hexdump => hexdump,
+        # :hexdump => hexdump,
         :checksum => checksum,
-        :payload => payload,
+        # :payload => payload,
         :link_type => link_type,
         :protocol => protocol.to_h,
         :ip_header => ip_header

@@ -1,3 +1,7 @@
+=== 0.6.2 / 2011/11/25
+
+* update Event#to_h for faster db insert
+
 === 0.6.1 / 2011/11/20
 
 * Add to_h method for core classes

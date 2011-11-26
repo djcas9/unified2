@@ -95,6 +95,13 @@ module Unified2
     end
 
     #
+    # Event Header
+    #
+    def header
+      @event_data[:header] || {}
+    end
+
+    #
     # Event Time
     #
     # The event timestamp created by unified2.
@@ -321,26 +328,30 @@ module Unified2
     # @return [Hash] Event hash object
     # 
     def to_h
-      @event_data[:position] = position
-      @event_data[:next_position] = next_position.to_i
-
-      @event_data[:protocol] = protocol
-      @event_data[:timestamp] = timestamp.to_s
-      @event_data[:checksum] = checksum
-      @event_data[:sensor] = sensor.to_h
 
       @to_hash = {
-        :event => {
-          :header => header,
-          :id => event_id,
-          :severity_id => priority_id,
-          :sensor => sensor.to_h,
-          :checksum => checksum,
-          :timestamp => timestamp.to_s,
-          :protocol => protocol,
-          :next_position => next_position.to_i,
-          :position => position
-        },
+        :header => header,
+        :id => id,
+        :severity_id => severity,
+        :sensor => sensor.to_h,
+        :checksum => checksum,
+        :timestamp => timestamp.to_s,
+        :protocol => protocol,
+        :next_position => next_position.to_i,
+        :position => position,
+        :source_ip => @event_data[:source_ip],
+        :event_microsecond => @event_data[:event_microsecond],
+        :impact_flag => @event_data[:impact_flag],
+        :impact => @event_data[:impact],
+        :blocked => @event_data[:blocked],
+        :mpls_label => @event_data[:mpls_label],
+        :vlan_id => @event_data[:vlan_id],
+        :destination_port => @event_data[:destination_port],
+        :source_port => @event_data[:source_port],
+        :event_id => @event_data[:event_id],
+        :policy_id => @event_data[:policy_id],
+        :destination_ip => @event_data[:destination_ip],
+        :severity => @event_data[:priority_id],
         :packets => [],
         :extras => []
       }
