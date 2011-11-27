@@ -1,4 +1,4 @@
-#require 'psych'
+require 'psych'
 require 'rubygems'
 require 'rake'
 
