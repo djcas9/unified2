@@ -7,6 +7,7 @@ require 'unified2/config_file'
 require 'unified2/core_ext'
 require 'unified2/event'
 require 'unified2/exceptions'
+require "unified2/paths"
 require 'unified2/version'
 
 #
@@ -187,6 +188,30 @@ module Unified2
   rescue Interrupt
   ensure
     io.close if io
+  end
+
+  def self.glob(path, options={}, &block)
+    event_id = options.fetch(:event_id, 0)
+    timestamp = options.fetch(:timestamp, nil)
+    position = options.fetch(:position, 0)
+
+    paths = Paths.new(Dir.glob(path), timestamp)
+
+    event_id += 1
+
+    paths.read do |path|
+      self.read(path.to_s) do |event|
+        event.id = event_id
+        block.call(event)
+        event_id += 1
+      end
+    end
+
+    self.watch(paths.watch.to_s, position) do |event|
+      event.id = event_id
+      block.call(event)
+      event_id += 1
+    end
   end
 
   private

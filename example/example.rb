@@ -15,14 +15,17 @@ Unified2.configuration do
   
   load :classifications, 'seeds/classification.config'
 
+  #position 'seeds/position'
 end
 
-path = 'seeds/unified2-current.log'
-#path = '/var/log/snort/merged.log'
+#path = 'seeds/unified2-current.log'
+path = "/var/log/snort/merged.log*"
 
-Unified2.watch(path, :first) do |event|
-
-  puts event
-
+Unified2.glob(path, {
+  :timestamp => 1323630843,
+  :position => 8651,
+  :event_id => 36
+}) do |event|
+  puts event.to_h
+  exit 1
 end
-
