@@ -202,15 +202,20 @@ module Unified2
     event_id += 1
 
     paths.read do |path|
+      file = path
+      p file
       self.read(path.to_s) do |event|
         event.id = event_id
+        event.file = path
         block.call(event)
         event_id += 1
       end
     end
 
+    p paths.watch.to_s
     self.watch(paths.watch.to_s, position) do |event|
       event.id = event_id
+      event.file = paths.watch
       block.call(event)
       event_id += 1
     end

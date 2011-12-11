@@ -42,7 +42,7 @@ module Unified2
     # Setup method defaults
     #
     attr_accessor :id, :event, :packets, :extras, :position,
-      :next_position
+      :next_position, :file
 
     #
     # Initialize event
@@ -356,6 +356,10 @@ module Unified2
         :packets => [],
         :extras => []
       }
+
+      if file && file.respond_to?(:timestamp)
+        @to_h[:file_timestamp] = file.timestamp
+      end
 
       extras.each do |extra|
         @to_hash[:extras].push(extra.to_h)
