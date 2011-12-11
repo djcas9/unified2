@@ -21,6 +21,10 @@ end
 #path = 'seeds/unified2-current.log'
 path = "/var/log/snort/merged.log.*"
 
+Unified2.on_file_change = Proc.new do
+  puts "HELLO"
+end
+
 Unified2.glob(path, {
   :timestamp => 0,
   :position => 0,

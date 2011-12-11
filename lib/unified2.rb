@@ -30,7 +30,7 @@ module Unified2
   class << self
     attr_accessor :signatures, :generators,
       :sensor, :hostname, :interface,
-      :classifications
+      :classifications, :on_file_change
   end
 
   #
@@ -197,7 +197,9 @@ module Unified2
 
     paths = Paths.new(Dir.glob(path), timestamp)
 
-    validate_path(path) if paths.all.empty?
+    if paths.all.empty?
+      validate_path(path)
+    end
 
     event_id += 1
 
@@ -209,6 +211,16 @@ module Unified2
         event.file = path
         block.call(event)
         event_id += 1
+      end
+
+      if on_file_change
+        on_file_change.call
+      end
+    end
+
+    if paths.all.empty?
+      if on_file_change
+        on_file_change.call
       end
     end
 
