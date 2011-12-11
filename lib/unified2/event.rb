@@ -331,7 +331,7 @@ module Unified2
 
       @to_hash = {
         :header => header,
-        :id => id,
+        :event_id => id,
         :severity_id => severity,
         :signature => signature.to_h,
         :classification => classification.to_h,
@@ -350,7 +350,6 @@ module Unified2
         :vlan_id => @event_data[:vlan_id],
         :destination_port => @event_data[:destination_port],
         :source_port => @event_data[:source_port],
-        :event_id => @event_data[:event_id],
         :policy_id => @event_data[:policy_id],
         :destination_ip => @event_data[:destination_ip],
         :severity => @event_data[:priority_id],
