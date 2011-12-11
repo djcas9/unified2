@@ -30,7 +30,7 @@ module Unified2
   class << self
     attr_accessor :signatures, :generators,
       :sensor, :hostname, :interface,
-      :classifications, :on_file_change
+      :classifications
   end
 
   #
@@ -205,26 +205,18 @@ module Unified2
 
     paths.read do |path|
       file = path
-      p file
       self.read(path.to_s) do |event|
         event.id = event_id
         event.file = path
         block.call(event)
         event_id += 1
       end
-
-      if on_file_change
-        on_file_change.call
-      end
     end
 
-    if paths.all.empty?
-      if on_file_change
-        on_file_change.call
-      end
+    unless paths.all.empty?
+      position = 0
     end
 
-    p paths.watch.to_s
     self.watch(paths.watch.to_s, position) do |event|
       event.id = event_id
       event.file = paths.watch
