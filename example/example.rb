@@ -19,12 +19,15 @@ Unified2.configuration do
 end
 
 #path = 'seeds/unified2-current.log'
-path = "/var/log/snort/merged.log.*"
+#path = "/var/log/snort/merged.log.*"
+path = "/Users/mephux/Downloads/snort.u2.*"
 
 Unified2.glob(path, {
   :timestamp => 0,
-  :position => 0,
+  :position => 0,#272425,
   :event_id => 0
 }) do |event|
-  puts event
+
+  puts event.to_h
+
 end

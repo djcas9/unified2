@@ -71,8 +71,14 @@ module Unified2
         :type => @protocol.to_s
       }
 
-      if send(:"#{@protocol.downcase}?")
-        hash.merge!(self.send(:"#{@protocol.downcase}"))
+      if respond_to?(:"#{@protocol.downcase}?")
+        
+        if send(:"#{@protocol.downcase}?")
+          hash.merge!(self.send(:"#{@protocol.downcase}"))
+        end
+
+      else
+        hash = { :type => 'NONE' }
       end
 
       hash

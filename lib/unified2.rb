@@ -213,6 +213,8 @@ module Unified2
 
     paths = Paths.new(Dir.glob(path), timestamp)
 
+    p paths
+
     if paths.all.empty?
       validate_path(path)
     end
@@ -238,7 +240,9 @@ module Unified2
     end
 
     if paths.watch.timestamp.to_i != timestamp
-      position = 0
+      unless paths.read.empty?
+        position = 0
+      end 
     end
 
     self.watch(paths.watch.to_s, position.to_i) do |event|
