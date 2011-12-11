@@ -358,7 +358,7 @@ module Unified2
       }
 
       if file && file.respond_to?(:timestamp)
-        @to_h[:file_timestamp] = file.timestamp
+        @to_hash[:file_timestamp] = file.timestamp
       end
 
       extras.each do |extra|
