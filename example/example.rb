@@ -19,7 +19,8 @@ Unified2.configuration do
 end
 
 #path = 'seeds/unified2-current.log'
-path = "/var/log/snort/merged.log*"
+#path = "/var/log/snort/merged.log*"
+path = "/var/log/snort/eth0-snort*"
 
 Unified2.glob(path, {
   :timestamp => 1323630843,

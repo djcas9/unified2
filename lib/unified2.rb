@@ -197,6 +197,8 @@ module Unified2
 
     paths = Paths.new(Dir.glob(path), timestamp)
 
+    validate_path(path) if paths.all.empty?
+
     event_id += 1
 
     paths.read do |path|
