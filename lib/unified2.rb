@@ -213,11 +213,11 @@ module Unified2
       end
     end
 
-    unless paths.all.empty?
+    if paths.read.length >= 1
       position = 0
     end
 
-    self.watch(paths.watch.to_s, position) do |event|
+    self.watch(paths.watch.to_s, position.to_i) do |event|
       event.id = event_id
       event.file = paths.watch
       block.call(event)

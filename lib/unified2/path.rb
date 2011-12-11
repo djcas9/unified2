@@ -12,7 +12,6 @@ module Unified2
   class Path
     
     def initialize(path)
-      p path
       @path = Pathname.new(path)
     end
 
