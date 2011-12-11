@@ -22,9 +22,9 @@ end
 path = "/var/log/snort/merged.log.*"
 
 Unified2.glob(path, {
-  :timestamp => 1323630843,
-  :position => 20,
+  :timestamp => 0,
+  :position => 0,
   :event_id => 0
 }) do |event|
-  #puts event.id
+  puts event
 end

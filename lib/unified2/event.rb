@@ -337,7 +337,7 @@ module Unified2
         :classification => classification.to_h,
         :sensor => sensor.to_h,
         :checksum => checksum,
-        :timestamp => timestamp.to_s,
+        :timestamp => timestamp.to_i,
         :protocol => protocol,
         :next_position => next_position.to_i,
         :position => position,
