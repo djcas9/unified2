@@ -237,7 +237,7 @@ module Unified2
 
     end
 
-    if path.watch.timestamp.to_i != timestamp
+    if paths.watch.timestamp.to_i != timestamp
       position = 0
     end
 
