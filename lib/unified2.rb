@@ -170,11 +170,27 @@ module Unified2
   # 
   # @return [nil]
   #
-  def self.read(path, &block)
+  def self.read(path, position=:first, &block)
     validate_path(path)
 
     io = File.open(path)
+   
+    case position      
+    when Integer
+      io.sysseek(position, IO::SEEK_CUR)
+
+    when Symbol, String
     
+      if position == :last
+        io.sysseek(0, IO::SEEK_END)
+      else
+        io.sysseek(0, IO::SEEK_SET)
+      end
+   
+    else
+      io.sysseek(0, IO::SEEK_SET)
+    end
+
     # Start with a null event.
     # This will always be ignored.
     @event = Event.new(0, 0)
@@ -205,15 +221,23 @@ module Unified2
 
     paths.read do |path|
       file = path
-      self.read(path.to_s) do |event|
+
+      if file.timestamp.to_i == timestamp
+        pos = position
+      else
+        pos = 0
+      end
+
+      self.read(path.to_s, position) do |event|
         event.id = event_id
         event.file = path
         block.call(event)
         event_id += 1
       end
+
     end
 
-    if paths.read.length >= 1
+    if path.watch.timestamp.to_i != timestamp
       position = 0
     end
 
