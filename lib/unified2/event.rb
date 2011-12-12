@@ -98,7 +98,17 @@ module Unified2
     # Event Header
     #
     def header
-      @event_data[:header] || {}
+      header = if @event_data
+        if @event_data.has_key?(:header)
+          @event_data[:header]
+        else
+          {}
+        end
+      else
+        {}
+      end
+
+      header
     end
 
     #

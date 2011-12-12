@@ -93,10 +93,8 @@ module Unified2
           "lev6"
         when 99
           # define UNIFIED2_IDS_EVENT_MPLS 99
-          puts "99"
         when 100
           # define UNIFIED2_IDS_EVENT_IPV6_MPLS
-          puts "100"
         when 104 
           # define UNIFIED2_IDS_EVENT_VLAN 104
           "ev4"
