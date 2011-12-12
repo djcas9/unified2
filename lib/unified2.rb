@@ -148,11 +148,11 @@ module Unified2
       end
     end
 
-  rescue UnknownHeaderType, IndexError, Errno::EINVAL, IOError
-    position = 0 unless position.is_a?(Integer)
-    io.sysseek(position += 1, IO::SEEK_CUR)
-    @event, event = nil
-    retry
+  #rescue UnknownHeaderType, IndexError, Errno::EINVAL, IOError
+    #position = 0 unless position.is_a?(Integer)
+    #io.sysseek(position += 1, IO::SEEK_CUR)
+    #@event, event = nil
+    #retry
   rescue RuntimeError
     raise(BinaryReadError, "incorrect file format or position seek error")
   rescue Interrupt

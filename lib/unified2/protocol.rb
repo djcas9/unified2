@@ -74,7 +74,7 @@ module Unified2
       if respond_to?(:"#{@protocol.downcase}?")
         
         if send(:"#{@protocol.downcase}?")
-          hash.merge!(self.send(:"#{@protocol.downcase}"))
+          #hash.merge!(self.send(:"#{@protocol.downcase}"))
         end
 
       else
