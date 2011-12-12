@@ -107,7 +107,7 @@ module Unified2
           # define UNIFIED2_EXTRA_DATA 110
           "extra_data"
         else
-          raise "unknown type #{header.u2type}"
+          raise(UnknownHeaderType, "unknown type #{header.u2type}")
         end
       end
 

@@ -1,3 +1,5 @@
 require 'unified2/exceptions/file_not_found'
 require 'unified2/exceptions/file_not_readable'
 require 'unified2/exceptions/binary_read_error'
+require 'unified2/exceptions/unknown_load_type'
+require 'unified2/exceptions/unknown_header_type'
