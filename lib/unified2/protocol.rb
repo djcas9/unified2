@@ -74,7 +74,7 @@ module Unified2
       if respond_to?(:"#{@protocol.downcase}?")
         
         if send(:"#{@protocol.downcase}?")
-          #hash.merge!(self.send(:"#{@protocol.downcase}"))
+          hash.merge!(self.send(:"#{@protocol.downcase}"))
         end
 
       else
@@ -128,8 +128,8 @@ module Unified2
         :reserved => hdr.tcp_reserved,
         :ecn => hdr.tcp_ecn,
         :opts_len => hdr.tcp_opts_len,
-        :rand_port => hdr.rand_port,
-        :options => hdr.tcp_options
+        :rand_port => hdr.rand_port
+        #:options => hdr.tcp_options
       }
       
       tcp[:body] = hdr.body if include_body
