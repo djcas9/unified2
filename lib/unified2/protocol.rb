@@ -6,7 +6,7 @@ module Unified2
   # Protocol
   #
   class Protocol
-    
+
     #
     # Initialize protocol object
     # 
@@ -72,7 +72,7 @@ module Unified2
       }
 
       if respond_to?(:"#{@protocol.downcase}?")
-        
+
         if send(:"#{@protocol.downcase}?")
           hash.merge!(self.send(:"#{@protocol.downcase}"))
         end
@@ -86,7 +86,7 @@ module Unified2
     alias header to_h
 
     private
-      
+
     def hdr
       return nil unless @packet.send(:"is_#{@protocol.downcase}?")
       @packet.send(:"#{@protocol.downcase}_header")
@@ -99,9 +99,9 @@ module Unified2
         :csum => hdr.icmp_sum,
         :code => hdr.icmp_code
       }
-      
+
       icmp[:body] = hdr.body if include_body
-      
+
       icmp
     end
 
@@ -110,9 +110,9 @@ module Unified2
         :length => hdr.len,
         :csum => hdr.udp_sum,
       }
-      
+
       udp[:body] = hdr.body if include_body
-      
+
       udp
     end
 
@@ -131,9 +131,9 @@ module Unified2
         :rand_port => hdr.rand_port
         #:options => hdr.tcp_options
       }
-      
+
       tcp[:body] = hdr.body if include_body
-      
+
       tcp
     end
 

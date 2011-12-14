@@ -66,20 +66,6 @@ module Unified2
     end
 
     #
-    # Packet Time
-    #
-    # Time of creation for the unified2 packet.
-    #
-    # @return [Time, nil] Packet time object
-    #
-    def packet_time
-      if @packet_data.has_key?(:packet_second)
-        @packet_data[:packet_second]
-        @timestamp = Time.at(@packet_data[:packet_second].to_i)
-      end
-    end
-
-    #
     # Checksum
     #
     # Create a unique checksum for each event
@@ -90,8 +76,8 @@ module Unified2
     # @return [String] Event checksum
     #
     def checksum
-      checkdum = [ip_source, ip_destination, signature.id, signature.generator, sensor.id, severity, classification.id]
-      Digest::MD5.hexdigest(checkdum.join(''))
+      checksum = [ip_source, ip_destination, signature.id, signature.generator, sensor.id, severity, classification.id]
+      Digest::MD5.hexdigest(checksum.join(''))
     end
 
     #

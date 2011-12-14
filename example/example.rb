@@ -12,10 +12,9 @@ Unified2.configuration do
   load :signatures, 'seeds/sid-msg.map'
 
   load :generators, 'seeds/gen-msg.map'
-  
+
   load :classifications, 'seeds/classification.config'
 
-  #position 'seeds/position'
 end
 
 #path = 'seeds/unified2-current.log'

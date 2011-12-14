@@ -10,7 +10,7 @@ module Unified2
   # Path
   #
   class Path
-    
+
     def initialize(path)
       @path = Pathname.new(path)
     end
@@ -26,10 +26,10 @@ module Unified2
     def timestamp
       match = @path.to_s.match(/\d{10}/).to_s
       timestamp = if !match.to_i.zero?
-        Time.at(match.to_i)
-      else
-        false
-      end
+                    Time.at(match.to_i)
+                  else
+                    false
+                  end
     end
 
     def valid?
@@ -37,6 +37,6 @@ module Unified2
     end
 
   end # Class Paths End
-  
+
 end # Module Unified2 End
 
