@@ -84,17 +84,13 @@ module Unified2
     # Event Header
     #
     def header
-      header = if @event_data
-        if @event_data.has_key?(:header)
-          @event_data[:header]
-        else
-          {}
-        end
+      return {} unless @event_data && @event_data.is_a?(Hash)
+
+      if @event_data.has_key?(:header)
+        @event_data[:header]
       else
         {}
       end
-
-      header
     end
 
     #
