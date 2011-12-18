@@ -225,14 +225,10 @@ module Unified2
       validate_path(path)
     end
 
-    p paths
-
     event_id += 1
 
     paths.read do |path|
       file = path
-
-      p file
 
       if file.timestamp.to_i == timestamp.to_i
         pos = position
@@ -255,21 +251,12 @@ module Unified2
       end 
     end
 
-    p paths.watch.to_s
-
     self.watch(paths.watch.to_s, position.to_i) do |event|
       event.id = event_id
       event.file = paths.watch
       block.call(event)
       event_id += 1
     end
-
-  rescue
-    p "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
-    p timestamp
-    p position
-    p paths
-    exit -1
   end
 
   private
