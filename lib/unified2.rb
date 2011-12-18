@@ -228,7 +228,7 @@ module Unified2
     event_id += 1
 
     paths.read do |path|
-      file = path.to_s
+      file = path
 
       p file
 
