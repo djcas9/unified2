@@ -29,7 +29,9 @@ Unified2.glob(path, {
   :position => 0 
 }) do |event|
   next unless event.tcp?
-  event.to_h
+  puts event.to_h
+
+  exit 1
 
   event.packets.each do |packet|
     p packet.protocol.header

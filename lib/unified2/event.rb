@@ -553,6 +553,7 @@ module Unified2
               :generator_id => @event.data.generator_id,
               :revision => @event.data.signature_revision,
               :name => sig[:name],
+              :references => sig[:references],
               :blank => false
             }
           end
@@ -564,6 +565,7 @@ module Unified2
             :generator_id => @event.data.generator_id,
             :revision => 0,
             :name => "Unknown Signature #{@event.data.signature_id}",
+            :references => {},
             :blank => true
           }
         end
