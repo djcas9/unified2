@@ -261,8 +261,8 @@ module Unified2
   rescue
     p "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
     p timestamp
-    p pos
     p position
+    p paths
     exit -1
   end
 
