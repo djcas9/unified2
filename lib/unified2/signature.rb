@@ -7,7 +7,8 @@ module Unified2
   #
   class Signature
     
-    attr_accessor :id, :generator, :revision, :name, :blank
+    attr_accessor :id, :generator, :revision, :name, 
+      :blank, :references
 
     #
     # Initialize signature object
@@ -23,6 +24,7 @@ module Unified2
     def initialize(signature={})
       @id = signature[:signature_id] || 0
       @generator = signature[:generator_id]
+      @references = signature[:references]
       @revision = signature[:revision]
       @name = signature[:name].strip
       @blank = signature[:blank] || false
@@ -34,7 +36,8 @@ module Unified2
         :generator_id => generator,
         :revision => revision,
         :name => name,
-        :blank => blank
+        :blank => blank,
+        :references => references
       }
     end
 
