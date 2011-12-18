@@ -234,13 +234,13 @@ module Unified2
 
       p file
 
-      if file.timestamp.to_i == timestamp
+      if file.timestamp.to_i == timestamp.to_i
         pos = position
       else
         pos = 0
       end
 
-      self.read(path.to_s, position) do |event|
+      self.read(path.to_s, pos) do |event|
         event.id = event_id
         event.file = path
         block.call(event)
