@@ -130,7 +130,7 @@ module Unified2
         :opts_len => hdr.tcp_opts_len,
         :rand_port => hdr.rand_port,
 
-        :options => hdr.tcp_options.unpack('H*'),
+        :options => hdr.tcp_options.unpack('H*').first,
         
         :flags => {
           :urg => hdr.tcp_flags.urg,
