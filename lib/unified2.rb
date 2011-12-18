@@ -24,13 +24,14 @@ module Unified2
   TYPES = [
     :signatures,
     :generators,
-    :classifications
+    :classifications,
+    :references
   ]
   
   class << self
     attr_accessor :signatures, :generators,
       :sensor, :hostname, :interface,
-      :classifications
+      :classifications, :references
   end
 
   #
@@ -48,6 +49,10 @@ module Unified2
   def self.configuration(options={}, &block)
     @sensor ||= Sensor.new(options)
     self.instance_eval(&block)
+    # Load ref data
+    if @references
+      @signatures.update_references
+    end 
   end
   
   #
@@ -217,8 +222,6 @@ module Unified2
     position = options.fetch(:position, 0)
 
     paths = Paths.new(Dir.glob(path), timestamp)
-
-    p paths
 
     if paths.all.empty?
       validate_path(path)

@@ -32,6 +32,35 @@ module Unified2
       @data.size
     end
 
+    #
+    # Update Signature References
+    #
+    def update_references
+      return nil unless @type == :signatures
+
+      @data.each do |key, value|
+        next unless value[:references]
+        new_refs = {}
+
+        value[:references].each do |k, v|
+          ref = Unified2.references.data[k.to_s]
+          next unless ref
+        
+          if v.is_a?(Array)
+            new_value = v.collect! { |r| "#{ref}#{r.to_s}" }
+
+            if new_refs[k].is_a?(Array)
+              new_refs[k] << new_value
+            else
+              new_refs[k] = new_value
+            end
+
+          end
+        end
+
+      end
+    end
+
     private
       
       #
@@ -44,6 +73,16 @@ module Unified2
         file = File.open(@path)
         
         case @type.to_sym
+        when :references
+
+          file.each_line do |line|
+            next if line[/^\#/]
+            next unless line[/^config\s/]
+            data = line.gsub!(/config reference: /, '').split(" ")
+
+            @data[data.first.downcase] = data.last
+          end
+
         when :classifications
 
           count = 0
@@ -91,11 +130,12 @@ module Unified2
                 references[key.downcase.to_sym] = [value]
               end
             end
-            
+
             @data[id] = {
               :signature_id => id.to_i,
               :name => body,
-              :generator_id => 1
+              :generator_id => 1,
+              :references => references
             }
           end
 

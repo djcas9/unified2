@@ -15,18 +15,23 @@ Unified2.configuration do
 
   load :classifications, 'seeds/classification.config'
 
+  load :references, 'seeds/reference.config'
+
 end
 
-#path = 'seeds/unified2-current.log'
+path = "/var/log/snort/merged.log.*"
 #path = "/var/log/snort/merged.log.*"
-path = "/Users/mephux/Downloads/snort.u2.*"
+#path = "/Users/mephux/Downloads/snort.u2.*"
 
-Unified2.glob(path, {
-  :timestamp => 0,
-  :position => 0,#272425,
-  :event_id => 0
+Unified2.glob(path, { 
+  :timestamp => 0, 
+  :position => 0, 
+  :position => 0 
 }) do |event|
+  next unless event.tcp?
+  event.to_h
 
-  puts event.to_h
-
+  event.packets.each do |packet|
+    p packet.protocol.header
+  end
 end

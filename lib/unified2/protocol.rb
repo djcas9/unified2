@@ -128,8 +128,18 @@ module Unified2
         :reserved => hdr.tcp_reserved,
         :ecn => hdr.tcp_ecn,
         :opts_len => hdr.tcp_opts_len,
-        :rand_port => hdr.rand_port
-        #:options => hdr.tcp_options
+        :rand_port => hdr.rand_port,
+
+        :options => hdr.tcp_options.unpack('H*'),
+        
+        :flags => {
+          :urg => hdr.tcp_flags.urg,
+          :ack => hdr.tcp_flags.ack,
+          :psh => hdr.tcp_flags.psh,
+          :rst => hdr.tcp_flags.rst,
+          :syn => hdr.tcp_flags.syn,
+          :fin => hdr.tcp_flags.fin
+        }
       }
 
       tcp[:body] = hdr.body if include_body
