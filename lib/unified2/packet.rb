@@ -162,8 +162,6 @@ module Unified2
 
     def to_h
       @to_hash = {
-        :event_id => event_id,
-        :event_timestamp => event_timestamp.to_s,
         :timestamp => timestamp.to_s,
         :length => length,
         :microsecond => microsecond,

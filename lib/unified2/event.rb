@@ -323,6 +323,7 @@ module Unified2
 
       @to_hash = {
         :header => header,
+        :timestamp => timestamp,
         :event_id => id,
         :severity_id => severity,
         :signature => signature.to_h,
