@@ -228,7 +228,9 @@ module Unified2
     event_id += 1
 
     paths.read do |path|
-      file = path
+      file = path.to_s
+
+      p file
 
       if file.timestamp.to_i == timestamp
         pos = position
@@ -250,6 +252,8 @@ module Unified2
         position = 0
       end 
     end
+
+    p paths.watch.to_s
 
     self.watch(paths.watch.to_s, position.to_i) do |event|
       event.id = event_id
