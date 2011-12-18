@@ -25,8 +25,7 @@ path = "/var/log/snort/merged.log.*"
 
 Unified2.glob(path, { 
   :timestamp => 0, 
-  :position => 0, 
-  :position => 0 
+  :position => 25428
 }) do |event|
   next unless event.tcp?
   puts event.to_h

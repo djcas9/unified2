@@ -257,6 +257,12 @@ module Unified2
       block.call(event)
       event_id += 1
     end
+
+  rescue
+    p "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+    p timestamp
+    p pos
+    p position
   end
 
   private
