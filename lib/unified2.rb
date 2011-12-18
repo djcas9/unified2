@@ -50,9 +50,7 @@ module Unified2
     @sensor ||= Sensor.new(options)
     self.instance_eval(&block)
     # Load ref data
-    if @references
-      @signatures.update_references
-    end 
+    # @signatures.update_references if @references
   end
   
   #

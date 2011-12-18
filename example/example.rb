@@ -31,7 +31,6 @@ Unified2.glob(path, {
   next unless event.tcp?
   puts event.to_h
 
-  exit 1
 
   event.packets.each do |packet|
     p packet.protocol.header
