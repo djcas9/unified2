@@ -263,6 +263,7 @@ module Unified2
     p timestamp
     p pos
     p position
+    exit -1
   end
 
   private
