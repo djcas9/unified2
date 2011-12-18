@@ -225,6 +225,8 @@ module Unified2
       validate_path(path)
     end
 
+    p paths
+
     event_id += 1
 
     paths.read do |path|
